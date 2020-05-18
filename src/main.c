@@ -157,7 +157,7 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_vector *profile, size
 		}
 		
 		gsl_vector_free(ausiliarTime);
-		gsl_vector_set( reducedChiSquared, numberOfSegment+n , getVarianceOfSegment(partialProfile, partialTime) / s );
+		gsl_vector_set( reducedChiSquared, numberOfSegment+n , getVarianceOfSegment(partialProfile, partialTime) / (s - orderOfDetrend -1) );
 		gsl_vector_free(partialProfile);
 		gsl_matrix_free(partialTime);
 
