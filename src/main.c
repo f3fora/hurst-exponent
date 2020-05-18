@@ -110,7 +110,7 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_vector *profile, size
 	 */
 	double begin = gsl_vector_get(time, 0);
 
-	gsl_vector *reducedChiSquared = gsl_vector_alloc(numberOfSegment);
+	gsl_vector *reducedChiSquared = gsl_vector_alloc(numberOfSegment*2 + 1);
 	gsl_vector *partialProfile;
 	gsl_vector *ausiliarTime;
 	gsl_matrix *partialTime;
@@ -120,7 +120,7 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_vector *profile, size
 	j=0;
 	for (n=0; n<numberOfSegment; n++)
 	{
-		for (i=j; ((lenghtOfSegment * n + begin) <= gsl_vector_get(time, j)) && (gsl_vector_get(time, j) < (lenghtOfSegment * (n+1) + begin) && (j < time->size) ); j++);
+		for (i=j; ((lenghtOfSegment * (double)n + begin) <= gsl_vector_get(time, j)) && (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+1.0f) + begin) && (j < time->size) ); j++);
 		s = j-i;
 		partialProfile = getSubVector(profile, i, s);
 		ausiliarTime = getSubVector(time, i, s);
@@ -134,11 +134,35 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_vector *profile, size
 		}
 		
 		gsl_vector_free(ausiliarTime);
-		gsl_vector_set( reducedChiSquared, n , getVarianceOfSegment(partialProfile, partialTime) / s );
+		gsl_vector_set( reducedChiSquared, n , getVarianceOfSegment(partialProfile, partialTime) / (s - orderOfDetrend - 1) ); // correct normalisation
 		gsl_vector_free(partialProfile);
 		gsl_matrix_free(partialTime);
 
 	}
+
+	j=0;
+	for (n=0; n<numberOfSegment; n++)
+	{
+		for (i=j; ((lenghtOfSegment * ((double)n-0.5f) + begin) <= gsl_vector_get(time, j)) && (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+0.5f) + begin) && (j < time->size) ); j++);
+		s = j-i;
+		partialProfile = getSubVector(profile, i, s);
+		ausiliarTime = getSubVector(time, i, s);
+		partialTime = gsl_matrix_alloc(s, orderOfDetrend+1);
+		gsl_matrix_set_all(partialTime, 1.0f);
+		
+		for (k=1; k<=orderOfDetrend; k++)
+		{
+			gsl_matrix_set_col(partialTime, k, ausiliarTime);
+			gsl_vector_mul(ausiliarTime, ausiliarTime);
+		}
+		
+		gsl_vector_free(ausiliarTime);
+		gsl_vector_set( reducedChiSquared, numberOfSegment+n , getVarianceOfSegment(partialProfile, partialTime) / s );
+		gsl_vector_free(partialProfile);
+		gsl_matrix_free(partialTime);
+
+	}
+
 
 	return reducedChiSquared;	
 }
@@ -160,7 +184,7 @@ double getVarianceOfSeries(gsl_vector *time, gsl_vector *profile, size_t orderOf
 		variance += pow(aus, (double)orderOfFluctuation / 2.0f);
 	}
 
-	variance = pow(variance / (double)numberOfSegment, 1.0f/orderOfFluctuation);
+	variance = pow(variance / (2.0f * (double)numberOfSegment + 1.0f), 1.0f/orderOfFluctuation);
 	return variance;
 }
 
@@ -178,7 +202,7 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 
 	size_t i;
 	double aus;
-	for (i=0; i<maxNumberOfSegment-minNumberOfSegment; i++)
+	for (i=0; i<maxNumberOfSegment-minNumberOfSegment; i++) 
 	{
 		lenghtOfSegment = (end - begin) / (double)(i + minNumberOfSegment);
 		aus = getVarianceOfSeries(time, profile, orderOfDetrend, orderOfFluctuation, i + minNumberOfSegment, lenghtOfSegment);
@@ -196,18 +220,24 @@ void getHurstExponent(gsl_matrix *DFASpace, gsl_vector *c, gsl_matrix *cov, doub
 	 * fit the space of DFA and s and get the Hurst Exponent
 	 */
 	gsl_vector *logDFA = gsl_vector_alloc(DFASpace->size1);
+	gsl_vector *weights = gsl_vector_alloc(DFASpace->size1);
 	gsl_matrix *logS = gsl_matrix_alloc(DFASpace->size1, 2);
 	gsl_matrix_set_all(logS, 1.0f);
 	
 	size_t i;
-	for (i=0; i<DFASpace->size1; i++)
+	for (i=0; i<DFASpace->size1 - 1; i++)
 	{
 		gsl_vector_set(logDFA, i, log(gsl_matrix_get(DFASpace, i, 1)));
 		gsl_matrix_set(logS, i, 1, log(gsl_matrix_get(DFASpace, i, 0)));
+		gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i+1, 1) - gsl_matrix_get(logS, i, 1)));
 	}
 
+	gsl_vector_set(logDFA, i, log(gsl_matrix_get(DFASpace, i, 1)));
+	gsl_matrix_set(logS, i, 1, log(gsl_matrix_get(DFASpace, i, 0)));
+	gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i, 1) - gsl_matrix_get(logS, i-1, 1)));
+
 	gsl_multifit_linear_workspace *work  = gsl_multifit_linear_alloc(DFASpace->size1, 2);  
-  	gsl_multifit_linear(logS, logDFA, c, cov, chisq, work);
+  	gsl_multifit_wlinear(logS, weights,logDFA, c, cov, chisq, work);
 
 	gsl_vector_set(c, 0, exp(gsl_vector_get(c, 0)));
 
