@@ -73,7 +73,6 @@ gsl_vector *determinateProfile(gsl_matrix *data, size_t toProfileColumn)
         }
 
         return profiledData;
-
 }
 
 
@@ -96,84 +95,88 @@ double getVarianceOfSegment(gsl_vector *partialProfile, gsl_matrix *partialTime)
 	gsl_multifit_linear_workspace *work  = gsl_multifit_linear_alloc(n, m);  
   	gsl_multifit_linear(partialTime, partialProfile, c, cov, &chisq, work);
 
-    	gsl_multifit_linear_free (work);
+    	gsl_multifit_linear_free(work);
 	gsl_matrix_free(cov);
 	gsl_vector_free(c);
 	return chisq;
-
 }
 
-gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t numberOfSegment, size_t lenghtOfSegment)
+
+double getLocalFit(gsl_vector *time, gsl_vector* profile, size_t i, size_t s, size_t orderOfDetrend)
 {
 	/*
-	 * Split the dataset into small segments and store the chisq of each in a vector
+	 * fit a local part of the series and return the chisq correctly normalized
 	 */
-	double begin = gsl_vector_get(time, 0);
+	if (s <= orderOfDetrend)	// if the number of points is minor or less of grade of freedom the chisq is zero
+		return 0.0f;
 
-	gsl_vector *reducedChiSquared = gsl_vector_alloc(numberOfSegment*2 + 1);
 	gsl_vector *partialProfile;
 	gsl_vector *ausiliarTime;
 	gsl_matrix *partialTime;
+	double k;
+
+	partialProfile = getSubVector(profile, i, s);	// No need a copy, just to be sure
+	ausiliarTime = getSubVector(time, i, s);	// I need a copy cause it will modify
+	partialTime = gsl_matrix_alloc(s, orderOfDetrend+1);
+	gsl_matrix_set_all(partialTime, 1.0f);
+		
+	for (k=1; k<=orderOfDetrend; k++)
+	{
+		gsl_matrix_set_col(partialTime, k, ausiliarTime);
+		gsl_vector_mul(ausiliarTime, ausiliarTime);
+	}
+	
+	gsl_vector_free(ausiliarTime);
+	double chisq = getVarianceOfSegment(partialProfile, partialTime) / (s - orderOfDetrend - 1); 
+	gsl_vector_free(partialProfile);
+	gsl_matrix_free(partialTime);
+
+	return chisq;
+}
+
+
+gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t numberOfSegment, size_t lenghtOfSegment, size_t numberOfWindows)
+{
+	/*
+	 * Split the dataset into small segments and store the chisq of each in a vector for each windows
+	 */
+	double begin = gsl_vector_get(time, 0);
+
+	double step = 1.0f/numberOfWindows;
+	gsl_vector *reducedChiSquared = gsl_vector_alloc((numberOfSegment - 2)  * numberOfWindows + 1);
 
 	size_t i, j;
-	size_t n, s, k;
-	j=0;
-	for (n=0; n<numberOfSegment; n++)
+	size_t n, s, a;
+	double chisq;
+	
+	for  (a=0; a<numberOfWindows;a++)
 	{
-		for (i=j; ((lenghtOfSegment * (double)n + begin) <= gsl_vector_get(time, j)) && (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+1.0f) + begin) && (j < time->size) ); j++);
-		s = j-i;
-		partialProfile = getSubVector(profile, i, s);
-		ausiliarTime = getSubVector(time, i, s);
-		partialTime = gsl_matrix_alloc(s, orderOfDetrend+1);
-		gsl_matrix_set_all(partialTime, 1.0f);
-		
-		for (k=1; k<=orderOfDetrend; k++)
+		j=0;
+		for (n=0; n<numberOfSegment; n++)
 		{
-			gsl_matrix_set_col(partialTime, k, ausiliarTime);
-			gsl_vector_mul(ausiliarTime, ausiliarTime);
+			for (i=j; ((lenghtOfSegment * ((double)n - a*step)  + begin) <= gsl_vector_get(time, j)) 
+					&& (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+ 1.0f - a*step) + begin) 
+					&& (j < time->size) ); j++);
+
+			if ((a==0) || ((a!=0) && (n>0) && (n<(numberOfSegment-1)))) 
+			{
+				s = j-i;
+				chisq = getLocalFit(time, profile, i, s, orderOfDetrend);
+				gsl_vector_set( reducedChiSquared, n , chisq); 
+			}
 		}
-		
-		gsl_vector_free(ausiliarTime);
-		gsl_vector_set( reducedChiSquared, n , getVarianceOfSegment(partialProfile, partialTime) / (s - orderOfDetrend - 1) ); // correct normalisation
-		gsl_vector_free(partialProfile);
-		gsl_matrix_free(partialTime);
 
 	}
-
-	j=0;
-	for (n=0; n<numberOfSegment; n++)
-	{
-		for (i=j; ((lenghtOfSegment * ((double)n-0.5f) + begin) <= gsl_vector_get(time, j)) && (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+0.5f) + begin) && (j < time->size) ); j++);
-		s = j-i;
-		partialProfile = getSubVector(profile, i, s);
-		ausiliarTime = getSubVector(time, i, s);
-		partialTime = gsl_matrix_alloc(s, orderOfDetrend+1);
-		gsl_matrix_set_all(partialTime, 1.0f);
-		
-		for (k=1; k<=orderOfDetrend; k++)
-		{
-			gsl_matrix_set_col(partialTime, k, ausiliarTime);
-			gsl_vector_mul(ausiliarTime, ausiliarTime);
-		}
-		
-		gsl_vector_free(ausiliarTime);
-		gsl_vector_set( reducedChiSquared, numberOfSegment+n , getVarianceOfSegment(partialProfile, partialTime) / (s - orderOfDetrend -1) );
-		gsl_vector_free(partialProfile);
-		gsl_matrix_free(partialTime);
-
-	}
-
-
 	return reducedChiSquared;	
 }
 
 
-double getVarianceOfSeries(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t numberOfSegment, size_t lenghtOfSegment)
+double getVarianceOfSeries(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t numberOfSegment, size_t lenghtOfSegment, size_t numberOfWindows)
 {
 	/*
 	 * determinate the variance of a series for a fixed number of segments
 	 */
-	gsl_vector *reducedChiSquared = getVarianceOfEachSegment(time, profile, orderOfDetrend, numberOfSegment, lenghtOfSegment);
+	gsl_vector *reducedChiSquared = getVarianceOfEachSegment(time, profile, orderOfDetrend, numberOfSegment, lenghtOfSegment, numberOfWindows);
 	
 	size_t i;
 	double variance = 0;
@@ -184,12 +187,13 @@ double getVarianceOfSeries(gsl_vector *time, gsl_vector *profile, size_t orderOf
 		variance += pow(aus, (double)orderOfFluctuation / 2.0f);
 	}
 
-	variance = pow(variance / (2.0f * (double)numberOfSegment + 1.0f), 1.0f/orderOfFluctuation);
+	variance = pow(variance / (reducedChiSquared->size), 1.0f/orderOfFluctuation);
+	gsl_vector_free(reducedChiSquared);
 	return variance;
 }
 
 
-gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t minNumberOfSegment, size_t maxNumberOfSegment)
+gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t minNumberOfSegment, size_t maxNumberOfSegment, size_t numberOfWindows)
 {
 	/*
 	 * calculate the space of DFA and s;
@@ -205,7 +209,7 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 	for (i=0; i<maxNumberOfSegment-minNumberOfSegment; i++) 
 	{
 		lenghtOfSegment = (end - begin) / (double)(i + minNumberOfSegment);
-		aus = getVarianceOfSeries(time, profile, orderOfDetrend, orderOfFluctuation, i + minNumberOfSegment, lenghtOfSegment);
+		aus = getVarianceOfSeries(time, profile, orderOfDetrend, orderOfFluctuation, i + minNumberOfSegment, lenghtOfSegment, numberOfWindows);
 		gsl_matrix_set(DFASpace, i, 0, lenghtOfSegment);
 		gsl_matrix_set(DFASpace, i, 1, aus);
 	}
@@ -238,18 +242,22 @@ void getHurstExponent(gsl_matrix *DFASpace, gsl_vector *c, gsl_matrix *cov, doub
 
 	gsl_multifit_linear_workspace *work  = gsl_multifit_linear_alloc(DFASpace->size1, 2);  
   	gsl_multifit_wlinear(logS, weights,logDFA, c, cov, chisq, work);
+	
+	gsl_vector_free(logDFA);
+	gsl_matrix_free(logS);
+	gsl_vector_free(weights);
+	gsl_multifit_linear_free(work);
 
 	gsl_vector_set(c, 0, exp(gsl_vector_get(c, 0)));
 
 	*chisq /= DFASpace->size1;
-    	gsl_multifit_linear_free(work);
-}
+    	}
 
 
 int main ( int argc, char *argv[] )
 {
 	// Get terminal arguments
-	if ( argc != 8 )
+	if ( argc != 9 )
 	{
 		return 1;
 	}
@@ -260,7 +268,8 @@ int main ( int argc, char *argv[] )
 	size_t fluctuation = atoi(argv[4]);
 	size_t minSeg = atoi(argv[5]);
 	size_t maxSeg = atoi(argv[6]);
-	char *inputFileName = argv[7];
+	size_t windows = atoi(argv[7]);
+	char *inputFileName = argv[8];
 
 	// Import initial matrix from the input file
 	gsl_matrix *inputData = gsl_matrix_alloc( rows,cols );
@@ -285,7 +294,7 @@ int main ( int argc, char *argv[] )
 	gsl_matrix_free( profileMatrix );
 
 	// Calculate DFA
-	gsl_matrix *DFAMatrix = getDFASpace(time, profile, detrend, fluctuation, minSeg, maxSeg);
+	gsl_matrix *DFAMatrix = getDFASpace(time, profile, detrend, fluctuation, minSeg, maxSeg, windows);
 
 	gsl_vector_free( time );
 	gsl_vector_free( profile );
