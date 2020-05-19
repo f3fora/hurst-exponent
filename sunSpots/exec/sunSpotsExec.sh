@@ -6,8 +6,8 @@
 detrend=2
 fluctuation=2 # hurst exponent <=> flutctuation=2
 minGroup=4 # should be >=4
-maxGroup=1500 # shouldn't be too high 
-numberOfWindows=30
+maxGroup=1000 # shouldn't be too high 
+numberOfWindows=1
 
 # Paths to find data and to save plots
 sunSpotOriginalData="../data/SN_d_tot_V2.0.csv"
@@ -15,6 +15,11 @@ sunSpotEditData="../data/editedSN.dat"
 sunSpotPlot="../img/dataPlot.tex"
 sunProfilePlot="../img/profilePlot.tex"
 sunDFAPlot="../img/DFAPlot.tex"
+DFAData="../data/DFA.dat"
+params="../data/params.dat"
+s0params="../data/s0params.dat"
+s1params="../data/s1params.dat"
+s2params="../data/s2params.dat"
 
 
 # Store in a new file: index (eq. to days pass since 01.01.1818), value, error
@@ -46,7 +51,7 @@ set xtics $xTicLabel
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
 
-./../../src/hurst-exponent $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $numberOfWindows $sunSpotEditData
+# ./../../src/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $numberOfWindows $sunSpotEditData $DFAData
 
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'profile.dat'"
@@ -69,11 +74,43 @@ plot $QprofileData using 1:2 notitle pt 1
 EOF
 
 QsunDFAPlot="'${sunDFAPlot}'"
-QDFAData="'DFA.dat'"
+QDFAData="'$DFAData'"
 
-c0=$(awk "FNR == 1 {print $1}" params.dat)
-c1=$(awk "FNR == 2 {print $1}" params.dat)
-H=$(awk "FNR == 3 {print $1}" params.dat)
+min=0
+max=$((maxGroup-minGroup))
+./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $params
+tc0=$(awk 'FNR == 1 {print $1}' $params)
+tc1=$(awk 'FNR == 2 {print $1}' $params)
+tH=$(awk 'FNR == 3 {print $1}' $params)
+tMax=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
+tMin=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
+
+min=0
+max=11
+./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $s0params
+s0c0=$(awk 'FNR == 1 {print $1}' $s0params)
+s0c1=$(awk 'FNR == 2 {print $1}' $s0params)
+s0H=$(awk 'FNR == 3 {print $1}' $s0params)
+s0Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
+s0Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
+
+min=13
+max=55
+./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $s1params
+s1c0=$(awk 'FNR == 1 {print $1}' $s1params)
+s1c1=$(awk 'FNR == 2 {print $1}' $s1params)
+s1H=$(awk 'FNR == 3 {print $1}' $s1params)
+s1Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
+s1Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
+
+min=80
+max=$((maxGroup - minGroup - min))
+./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $s2params
+s2c0=$(awk 'FNR == 1 {print $1}' $s2params)
+s2c1=$(awk 'FNR == 2 {print $1}' $s2params)
+s2H=$(awk 'FNR == 3 {print $1}' $s2params)
+s2Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
+s2Min=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
 
 gnuplot << EOF
 set terminal cairolatex pdf transparent size 16cm, 9cm
@@ -91,10 +128,17 @@ set format y '$ 10^{%L}$'
 
 set xrange [X_min:X_max]
 
-f(x) = $c0 * ( x ** $c1)
+tf(x) = ($tMin <= x && x <= $tMax) ? $tc0 * ( x ** $tc1) : 1/0
+s0f(x) = ($s0Min <= x && x<= $s0Max) ? $s0c0 * ( x ** $s0c1) : 1/0
+s1f(x) = ($s1Min  <= x && x <= $s1Max) ? $s1c0 * ( x ** $s1c1) : 1/0
+s2f(x) = ($s2Min <= x && x <= $s2Max) ? $s2c0 * ( x ** $s2c1) : 1/0
 
 plot $QDFAData using 1:2 t 'DFA' pt 6, \
-	f(x) t 'H = $H'
+	tf(x) t 'H = $tH', \
+	s0f(x) t 'H = $s0H', \
+	s1f(x) t 'H = $s1H', \
+	s2f(x) t 'H = $s2H'
+
 
 EOF
 
