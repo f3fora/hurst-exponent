@@ -3,10 +3,11 @@
 # I got sunSpots from
 # http://sidc.be/silso/datafiles
 
-detrend=1
+detrend=2
 fluctuation=2 # hurst exponent <=> flutctuation=2
 minGroup=4 # should be >=4
-maxGroup=1000 # I thing is enought
+maxGroup=1500 # shouldn't be too high 
+numberOfWindows=30
 
 # Paths to find data and to save plots
 sunSpotOriginalData="../data/SN_d_tot_V2.0.csv"
@@ -45,7 +46,7 @@ set xtics $xTicLabel
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
 
-./../../src/hurst-exponent $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $sunSpotEditData
+./../../src/hurst-exponent $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $numberOfWindows $sunSpotEditData
 
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'profile.dat'"
