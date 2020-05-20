@@ -100,7 +100,7 @@ double getLocalFit(gsl_matrix *cTime, gsl_vector* profile, size_t i, size_t s, s
 }
 
 
-gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t numberOfSegment, size_t lenghtOfSegment, size_t numberOfWindows)
+gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t numberOfSegment, double lenghtOfSegment, size_t numberOfWindows)
 {
 	/*
 	 * Split the dataset into small segments and store the chisq of each in a vector for each windows
@@ -108,7 +108,7 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_ve
 	double begin = gsl_vector_get(time, 0);
 
 	double step = 1.0f/numberOfWindows;
-	gsl_vector *reducedChiSquared = gsl_vector_alloc((numberOfSegment - 1) * numberOfWindows + 1);
+	gsl_vector *reducedChiSquared = gsl_vector_alloc(((numberOfSegment - 1) * numberOfWindows + 1));
 
 	size_t i, j;
 	size_t n, s, a;
@@ -121,22 +121,22 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_ve
 		{
 			for (i=j; ((lenghtOfSegment * ((double)n - a*step)  + begin) <= gsl_vector_get(time, j)) 
 					&& (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+ 1.0f - a*step) + begin) 
-					&& (j < time->size) ); j++);
+					&& (j < time->size-1) ); j++);
 
 			if ((a==0) || ((a!=0) && (n>0) && (n<(numberOfSegment-1)))) 
 			{
-				s = j-i;
+				s = j-i-1;
 				chisq = getLocalFit(cTime, profile, i, s, orderOfDetrend);
 				gsl_vector_set( reducedChiSquared, n , chisq); 
 			}
 		}
-
 	}
+
 	return reducedChiSquared;	
 }
 
 
-double getVarianceOfSeries(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t numberOfSegment, size_t lenghtOfSegment, size_t numberOfWindows)
+double getVarianceOfSeries(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t numberOfSegment, double lenghtOfSegment, size_t numberOfWindows)
 {
 	/*
 	 * determinate the variance of a series for a fixed number of segments
