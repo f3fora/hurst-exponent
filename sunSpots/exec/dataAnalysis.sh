@@ -3,23 +3,29 @@
 # I got sunSpots from
 # http://sidc.be/silso/datafiles
 
-detrend=2
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+cd $DIR
+
+detrend=3
 fluctuation=2 # hurst exponent <=> flutctuation=2
 minGroup=4 # should be >=4
 maxGroup=1000 # shouldn't be too high 
-numberOfWindows=1
+numberOfWindows=10
 
 # Paths to find data and to save plots
-sunSpotOriginalData="../data/SN_d_tot_V2.0.csv"
-sunSpotEditData="../data/editedSN.dat"
+sunSpotOriginalData="../data/raw/SN_d_tot_V2.0.csv"
 sunSpotPlot="../img/dataPlot.tex"
 sunProfilePlot="../img/profilePlot.tex"
 sunDFAPlot="../img/DFAPlot.tex"
-DFAData="../data/DFA.dat"
-params="../data/params.dat"
-s0params="../data/s0params.dat"
-s1params="../data/s1params.dat"
-s2params="../data/s2params.dat"
+outputPath="../data/processed/"
+profileName="${outputPath}profile.dat"
+sunSpotEditData="${outputPath}editedSN.dat"
+DFAData="${outputPath}DFA.dat"
+params="${outputPath}params.dat"
+s0params="${outputPath}s0params.dat"
+s1params="${outputPath}s1params.dat"
+s2params="${outputPath}s2params.dat"
 
 
 # Store in a new file: index (eq. to days pass since 01.01.1818), value, error
@@ -51,10 +57,10 @@ set xtics $xTicLabel
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
 
-# ./../../src/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $numberOfWindows $sunSpotEditData $DFAData
+./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $numberOfWindows $sunSpotEditData $outputPath
 
 QsunProfilePlot="'${sunProfilePlot}'"
-QprofileData="'profile.dat'"
+QprofileData="'${profileName}'"
 gnuplot << EOF
 set terminal cairolatex pdf transparent size 16cm, 9cm
 set output $QsunProfilePlot
@@ -78,7 +84,7 @@ QDFAData="'$DFAData'"
 
 min=0
 max=$((maxGroup-minGroup))
-./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $params
+./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $params
 tc0=$(awk 'FNR == 1 {print $1}' $params)
 tc1=$(awk 'FNR == 2 {print $1}' $params)
 tH=$(awk 'FNR == 3 {print $1}' $params)
@@ -87,7 +93,7 @@ tMin=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
 
 min=0
 max=11
-./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $s0params
+./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $s0params
 s0c0=$(awk 'FNR == 1 {print $1}' $s0params)
 s0c1=$(awk 'FNR == 2 {print $1}' $s0params)
 s0H=$(awk 'FNR == 3 {print $1}' $s0params)
@@ -96,7 +102,7 @@ s0Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
 
 min=13
 max=55
-./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $s1params
+./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $s1params
 s1c0=$(awk 'FNR == 1 {print $1}' $s1params)
 s1c1=$(awk 'FNR == 2 {print $1}' $s1params)
 s1H=$(awk 'FNR == 3 {print $1}' $s1params)
@@ -105,7 +111,7 @@ s1Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
 
 min=80
 max=$((maxGroup - minGroup - min))
-./../../src/HE $((maxGroup - minGroup)) $min $max $DFAData $s2params
+./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $s2params
 s2c0=$(awk 'FNR == 1 {print $1}' $s2params)
 s2c1=$(awk 'FNR == 2 {print $1}' $s2params)
 s2H=$(awk 'FNR == 3 {print $1}' $s2params)
@@ -134,8 +140,8 @@ s1f(x) = ($s1Min  <= x && x <= $s1Max) ? $s1c0 * ( x ** $s1c1) : 1/0
 s2f(x) = ($s2Min <= x && x <= $s2Max) ? $s2c0 * ( x ** $s2c1) : 1/0
 
 plot $QDFAData using 1:2 t 'DFA' pt 6, \
-	tf(x) t 'H = $tH', \
-	s0f(x) t 'H = $s0H', \
+	tf(x) t 'H = $tH' , \
+ 	s0f(x) t 'H = $s0H', \
 	s1f(x) t 'H = $s1H', \
 	s2f(x) t 'H = $s2H'
 

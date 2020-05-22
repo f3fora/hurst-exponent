@@ -10,12 +10,10 @@
 
 #define TIME_COLUMN 0
 #define X_COLUMN 1
-#define profileFileName "profile.dat"
-#define DFAFileName "DFA.dat"
-#define covFileName "covariance.dat"
-#define paramsFileName "params.dat"
-
+#define PROFILE_NAME "profile.dat"
+#define DFA_NAME "DFA.dat"
      
+
 int print_matrix(FILE *f, const gsl_matrix *m)
 {
 	/*
@@ -103,7 +101,7 @@ double getLocalFit(gsl_matrix *cTime, gsl_vector* profile, size_t i, size_t s, s
 }
 
 
-gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t numberOfSegment, size_t lenghtOfSegment, size_t numberOfWindows)
+gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t numberOfSegment, double lenghtOfSegment, size_t numberOfWindows)
 {
 	/*
 	 * Split the dataset into small segments and store the chisq of each in a vector for each windows
@@ -111,7 +109,7 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_ve
 	double begin = gsl_vector_get(time, 0);
 
 	double step = 1.0f/numberOfWindows;
-	gsl_vector *reducedChiSquared = gsl_vector_alloc((numberOfSegment - 2)  * numberOfWindows + 1);
+	gsl_vector *reducedChiSquared = gsl_vector_alloc(2*((numberOfSegment - 1) * numberOfWindows + 1));
 
 	size_t i, j;
 	size_t n, s, a;
@@ -122,24 +120,24 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_ve
 		j=0;
 		for (n=0; n<numberOfSegment; n++)
 		{
-			for (i=j; ((lenghtOfSegment * ((double)n - a*step)  + begin) <= gsl_vector_get(time, j)) 
-					&& (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+ 1.0f - a*step) + begin) 
-					&& (j < time->size) ); j++);
+			for (i=j; ((lenghtOfSegment * ((double)n - a*step)  + begin) <= gsl_vector_get(time, j))
+					&& (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+ 1.0f - a*step) + begin))
+					&& (j < time->size-1) ; j++);
 
-			if ((a==0) || ((a!=0) && (n>0) && (n<(numberOfSegment-1)))) 
+			if ((a==0) || ((a!=0) && (n>0))) 
 			{
-				s = j-i;
+				s = j-i-1;
 				chisq = getLocalFit(cTime, profile, i, s, orderOfDetrend);
 				gsl_vector_set( reducedChiSquared, n , chisq); 
 			}
 		}
-
 	}
+
 	return reducedChiSquared;	
 }
 
 
-double getVarianceOfSeries(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t numberOfSegment, size_t lenghtOfSegment, size_t numberOfWindows)
+double getVarianceOfSeries(gsl_vector *time, gsl_matrix *cTime, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t numberOfSegment, double lenghtOfSegment, size_t numberOfWindows)
 {
 	/*
 	 * determinate the variance of a series for a fixed number of segments
@@ -204,58 +202,20 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 }
 
 
-void getHurstExponent(gsl_matrix *DFASpace, gsl_vector *c, gsl_matrix *cov, double *chisq)
-{
-	/*
-	 * fit the space of DFA and s and get the Hurst Exponent
-	 */
-	gsl_vector *logDFA = gsl_vector_alloc(DFASpace->size1);
-	gsl_vector *weights = gsl_vector_alloc(DFASpace->size1);
-	gsl_matrix *logS = gsl_matrix_alloc(DFASpace->size1, 2);
-	gsl_matrix_set_all(logS, 1.0f);
-	
-	size_t i;
-	for (i=0; i<DFASpace->size1 - 1; i++)
-	{
-		gsl_vector_set(logDFA, i, log(gsl_matrix_get(DFASpace, i, 1)));
-		gsl_matrix_set(logS, i, 1, log(gsl_matrix_get(DFASpace, i, 0)));
-		gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i+1, 1) - gsl_matrix_get(logS, i, 1)));
-	}
-
-	gsl_vector_set(logDFA, i, log(gsl_matrix_get(DFASpace, i, 1)));
-	gsl_matrix_set(logS, i, 1, log(gsl_matrix_get(DFASpace, i, 0)));
-	gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i, 1) - gsl_matrix_get(logS, i-1, 1)));
-
-	gsl_multifit_linear_workspace *work  = gsl_multifit_linear_alloc(DFASpace->size1, 2);  
-  	gsl_multifit_wlinear(logS, weights,logDFA, c, cov, chisq, work);
-	
-	gsl_vector_free(logDFA);
-	gsl_matrix_free(logS);
-	gsl_vector_free(weights);
-	gsl_multifit_linear_free(work);
-
-	gsl_vector_set(c, 0, exp(gsl_vector_get(c, 0)));
-
-	*chisq /= DFASpace->size1;
-    	}
-
-
 int main ( int argc, char *argv[] )
 {
 	// Get terminal arguments
-	if ( argc != 9 )
-	{
-		return 1;
-	}
-
-	size_t rows = atoi(argv[1]); // First arg is number of rows of input file
-	size_t cols = atoi(argv[2]); // Second arg is number of cols
+	if ( argc != 10) return 1;
+		
+	size_t rows = atoi(argv[1]); 
+	size_t cols = atoi(argv[2]); 
 	size_t detrend = atoi(argv[3]);
 	size_t fluctuation = atoi(argv[4]);
 	size_t minSeg = atoi(argv[5]);
 	size_t maxSeg = atoi(argv[6]);
 	size_t windows = atoi(argv[7]);
 	char *inputFileName = argv[8];
+	char *outputPath = argv[9];
 
 	// Import initial matrix from the input file
 	gsl_matrix *inputData = gsl_matrix_alloc( rows,cols );
@@ -268,7 +228,11 @@ int main ( int argc, char *argv[] )
 	gsl_vector *profile = determinateProfile(inputData, X_COLUMN) ;
 	gsl_vector *time = gsl_vector_alloc( inputData->size1);
 	gsl_matrix_get_col(time, inputData, TIME_COLUMN);
-	gsl_matrix_free( inputData );	
+	gsl_matrix_free( inputData );
+
+	char *profileFileName = malloc(strlen(outputPath) + strlen(PROFILE_NAME) + 1);
+	strcpy(profileFileName, outputPath);
+	strcat(profileFileName, PROFILE_NAME);
 
 	// Export profile data
 	if ( ( file = fopen( profileFileName, "w" ) ) == 0 ) return 1;
@@ -279,36 +243,26 @@ int main ( int argc, char *argv[] )
 	fclose( file );
 	gsl_matrix_free( profileMatrix );
 
+	free(profileFileName);
+
 	// Calculate DFA
 	gsl_matrix *DFAMatrix = getDFASpace(time, profile, detrend, fluctuation, minSeg, maxSeg, windows);
 
 	gsl_vector_free( time );
 	gsl_vector_free( profile );
 
+	char *DFAFileName = malloc(strlen(outputPath) + strlen(DFA_NAME) + 1);
+	strcpy(DFAFileName, outputPath);
+	strcat(DFAFileName, DFA_NAME);
+
 	// Export dfa data
 	if ( ( file = fopen( DFAFileName, "w" ) ) == 0 ) return 1;
 	print_matrix(file, DFAMatrix);
 	fclose( file );
-	
-	// Fit DFA for calculate Hurst Exponent
-	gsl_vector *params = gsl_vector_alloc(2);
-	gsl_matrix *covarianceMatrix = gsl_matrix_alloc(2, 2);
-	double chiSquare;
-	getHurstExponent(DFAMatrix, params, covarianceMatrix, &chiSquare);
+
+	free(DFAFileName);
+
 	gsl_matrix_free( DFAMatrix );
-	
-	// Export fit result
-	if ( ( file = fopen( covFileName, "w" ) ) == 0 ) return 1;
-	print_matrix(file, covarianceMatrix);
-	fclose(file);
-	gsl_matrix_free(covarianceMatrix);
-	
-	if ( ( file = fopen( paramsFileName, "w" ) ) == 0 ) return 1;
-	gsl_vector_fprintf(file, params, "%f");
-	fprintf(file, "%f\n", gsl_vector_get(params, 1) - 1.0f); 
-	gsl_vector_free(params);
-	fprintf(file, "%f", chiSquare);
-	fclose(file);
 
 	return 0;
 }
