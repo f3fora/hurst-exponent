@@ -12,6 +12,8 @@
 #define X_COLUMN 1
 #define PROFILE_NAME "profile.dat"
 #define DFA_NAME "DFA.dat"
+
+#define INVALID -42.0f
      
 
 int print_matrix(FILE *f, const gsl_matrix *m)
@@ -107,19 +109,21 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_ve
 	 * Split the dataset into small segments and store the chisq of each in a vector for each windows
 	 */
 	double begin = gsl_vector_get(time, 0);
-
+	double end = gsl_vector_get(time, time->size-1);
 	double step = 1.0f/numberOfWindows;
-	gsl_vector *reducedChiSquared = gsl_vector_alloc(2*((numberOfSegment - 1) * numberOfWindows + 1));
-
-	size_t i, j;
+	gsl_vector *reducedChiSquared = gsl_vector_alloc(2*numberOfSegment * numberOfWindows); // overstimated size
+	gsl_vector_set_all(reducedChiSquared, INVALID);
+	size_t i, j, k;
 	size_t n, s, a;
 	double chisq;
 	
 	for  (a=0; a<numberOfWindows;a++)
 	{
 		j=0;
+		k=time->size -1;
 		for (n=0; n<numberOfSegment; n++)
 		{
+			// Straight
 			for (i=j; ((lenghtOfSegment * ((double)n - a*step)  + begin) <= gsl_vector_get(time, j))
 					&& (gsl_vector_get(time, j) < (lenghtOfSegment * ((double)n+ 1.0f - a*step) + begin))
 					&& (j < time->size-1) ; j++);
@@ -128,7 +132,18 @@ gsl_vector *getVarianceOfEachSegment(gsl_vector *time, gsl_matrix *cTime, gsl_ve
 			{
 				s = j-i-1;
 				chisq = getLocalFit(cTime, profile, i, s, orderOfDetrend);
-				gsl_vector_set( reducedChiSquared, n , chisq); 
+				gsl_vector_set( reducedChiSquared, n + 2*numberOfSegment*a , chisq); 
+			}
+			// Reverse 
+			for (i=k; ((end - lenghtOfSegment * ((double)n - a*step)) >= gsl_vector_get(time, k))
+					&& (gsl_vector_get(time, k) > (end - lenghtOfSegment * ((double)n+ 1.0f - a*step)))
+					&& (k > 0) ; k--);
+
+			if ((a==0) || ((a!=0) && (n>0))) 
+			{
+				s = i-k-1;
+				chisq = getLocalFit(cTime, profile, k, s, orderOfDetrend);
+				gsl_vector_set( reducedChiSquared, n + numberOfSegment + 2*numberOfSegment*a , chisq); 
 			}
 		}
 	}
@@ -144,27 +159,31 @@ double getVarianceOfSeries(gsl_vector *time, gsl_matrix *cTime, gsl_vector *prof
 	 */
 	gsl_vector *reducedChiSquared = getVarianceOfEachSegment(time, cTime, profile, orderOfDetrend, numberOfSegment, lenghtOfSegment, numberOfWindows);
 	
-	size_t i;
+	size_t i, j=0;
 	double variance = 0;
 	double aus;
-	for (i=0; i<numberOfSegment; i++)
+	for (i=0; i<reducedChiSquared->size; i++)
 	{
-		aus = gsl_vector_get(reducedChiSquared, i);
-		variance += pow(aus, (double)orderOfFluctuation / 2.0f);
+		if (gsl_vector_get(reducedChiSquared, i) != INVALID)
+		{
+			aus = gsl_vector_get(reducedChiSquared, i);
+			variance += pow(aus, (double)orderOfFluctuation / 2.0f);
+			j++;
+		}
 	}
 
-	variance = pow(variance / (reducedChiSquared->size), 1.0f/orderOfFluctuation);
+	variance = pow(variance / (j), 1.0f/orderOfFluctuation);
 	gsl_vector_free(reducedChiSquared);
 	return variance;
 }
 
 
-gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t minNumberOfSegment, size_t maxNumberOfSegment, size_t numberOfWindows)
+gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDetrend, size_t orderOfFluctuation, size_t minNumberOfSegment, size_t maxNumberOfSegment, size_t numberOfPoints, size_t numberOfWindows)
 {
 	/*
 	 * calculate the space of DFA and s;
 	 */
-	gsl_matrix *DFASpace = gsl_matrix_alloc( maxNumberOfSegment - minNumberOfSegment, 2 );
+	gsl_matrix *DFASpace = gsl_matrix_alloc( numberOfPoints, 2 );
 
 	gsl_vector *ausiliarTime=gsl_vector_alloc(time->size);
 	gsl_matrix *computeTime=gsl_matrix_alloc(time->size, orderOfDetrend+1);
@@ -185,13 +204,16 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 	double begin = gsl_vector_get(time, 0);
 	double end = gsl_vector_get(time, time->size - 1);
 	double lenghtOfSegment;
+	double step = log(maxNumberOfSegment - minNumberOfSegment + 1) / (numberOfPoints -1);
+	double numberOfSegment;
 
 	size_t i;
 	double aus;
-	for (i=0; i<maxNumberOfSegment-minNumberOfSegment; i++) 
+	for (i=0; i<numberOfPoints; i++) 
 	{
-		lenghtOfSegment = (end - begin) / (double)(i + minNumberOfSegment);
-		aus = getVarianceOfSeries(time, computeTime, profile, orderOfDetrend, orderOfFluctuation, i + minNumberOfSegment, lenghtOfSegment, numberOfWindows);
+		numberOfSegment = minNumberOfSegment - 1 + exp(i*step);
+		lenghtOfSegment = (end - begin) / (numberOfSegment);
+		aus = getVarianceOfSeries(time, computeTime, profile, orderOfDetrend, orderOfFluctuation, (size_t)numberOfSegment, lenghtOfSegment, numberOfWindows);
 		gsl_matrix_set(DFASpace, i, 0, lenghtOfSegment);
 		gsl_matrix_set(DFASpace, i, 1, aus);
 	}
@@ -205,7 +227,7 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 int main ( int argc, char *argv[] )
 {
 	// Get terminal arguments
-	if ( argc != 10) return 1;
+	if ( argc != 11) return 1;
 		
 	size_t rows = atoi(argv[1]); 
 	size_t cols = atoi(argv[2]); 
@@ -213,9 +235,10 @@ int main ( int argc, char *argv[] )
 	size_t fluctuation = atoi(argv[4]);
 	size_t minSeg = atoi(argv[5]);
 	size_t maxSeg = atoi(argv[6]);
-	size_t windows = atoi(argv[7]);
-	char *inputFileName = argv[8];
-	char *outputPath = argv[9];
+	size_t nSeg = atoi(argv[7]);
+	size_t windows = atoi(argv[8]);
+	char *inputFileName = argv[9];
+	char *outputPath = argv[10];
 
 	// Import initial matrix from the input file
 	gsl_matrix *inputData = gsl_matrix_alloc( rows,cols );
@@ -246,7 +269,7 @@ int main ( int argc, char *argv[] )
 	free(profileFileName);
 
 	// Calculate DFA
-	gsl_matrix *DFAMatrix = getDFASpace(time, profile, detrend, fluctuation, minSeg, maxSeg, windows);
+	gsl_matrix *DFAMatrix = getDFASpace(time, profile, detrend, fluctuation, minSeg, maxSeg, nSeg, windows);
 
 	gsl_vector_free( time );
 	gsl_vector_free( profile );

@@ -17,8 +17,7 @@ void getHurstExponent(gsl_matrix *DFASpace, gsl_vector *c, gsl_matrix *cov, doub
 	gsl_vector *logDFA = gsl_vector_alloc(DFASpace->size1);
 	gsl_vector *weights = gsl_vector_alloc(DFASpace->size1);
 	gsl_matrix *logS = gsl_matrix_alloc(DFASpace->size1, 2);
-	gsl_matrix_set_all(logS, 1.0f);
-	
+	gsl_matrix_set_all(logS, 1.0f);	
 	size_t i;
 	for (i=0; i<DFASpace->size1 - 1; i++)
 	{

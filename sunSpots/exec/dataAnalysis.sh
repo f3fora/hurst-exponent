@@ -11,6 +11,7 @@ detrend=3
 fluctuation=2 # hurst exponent <=> flutctuation=2
 minGroup=4 # should be >=4
 maxGroup=1000 # shouldn't be too high 
+nGroup=300
 numberOfWindows=10
 
 # Paths to find data and to save plots
@@ -57,7 +58,7 @@ set xtics $xTicLabel
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
 
-./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $numberOfWindows $sunSpotEditData $outputPath
+./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $sunSpotEditData $outputPath
 
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'${profileName}'"
@@ -83,8 +84,8 @@ QsunDFAPlot="'${sunDFAPlot}'"
 QDFAData="'$DFAData'"
 
 min=0
-max=$((maxGroup-minGroup))
-./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $params
+max=$nGroup
+./../../exec/HE $nGroup $min $max $DFAData $params
 tc0=$(awk 'FNR == 1 {print $1}' $params)
 tc1=$(awk 'FNR == 2 {print $1}' $params)
 tH=$(awk 'FNR == 3 {print $1}' $params)
@@ -92,26 +93,26 @@ tMax=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
 tMin=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
 
 min=0
-max=11
-./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $s0params
+max=80
+./../../exec/HE $nGroup $min $max $DFAData $s0params
 s0c0=$(awk 'FNR == 1 {print $1}' $s0params)
 s0c1=$(awk 'FNR == 2 {print $1}' $s0params)
 s0H=$(awk 'FNR == 3 {print $1}' $s0params)
 s0Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
 s0Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
 
-min=13
-max=55
-./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $s1params
+min=80
+max=70
+./../../exec/HE $nGroup $min $max $DFAData $s1params
 s1c0=$(awk 'FNR == 1 {print $1}' $s1params)
 s1c1=$(awk 'FNR == 2 {print $1}' $s1params)
 s1H=$(awk 'FNR == 3 {print $1}' $s1params)
 s1Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
 s1Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
 
-min=80
-max=$((maxGroup - minGroup - min))
-./../../exec/HE $((maxGroup - minGroup)) $min $max $DFAData $s2params
+min=150
+max=$((nGroup - min))
+./../../exec/HE $nGroup $min $max $DFAData $s2params
 s2c0=$(awk 'FNR == 1 {print $1}' $s2params)
 s2c1=$(awk 'FNR == 2 {print $1}' $s2params)
 s2H=$(awk 'FNR == 3 {print $1}' $s2params)
