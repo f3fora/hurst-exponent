@@ -77,7 +77,6 @@ int main( int argc, char *argv[] )
 	
 	if ( ( file = fopen( paramsFileName, "w" ) ) == 0 ) return 1;
 	gsl_vector_fprintf(file, params, "%f");
-	fprintf(file, "%f\n", gsl_vector_get(params, 1) - 1.0f); 
 	gsl_vector_free(params);
 	fprintf(file, "%f", chiSquare);
 	fclose(file);

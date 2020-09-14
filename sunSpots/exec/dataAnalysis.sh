@@ -7,7 +7,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR
 
-detrend=3
+detrend=1 # hurst exponent <=> detrend=1
 fluctuation=2 # hurst exponent <=> flutctuation=2
 minGroup=4 # should be >=4
 maxGroup=1000 # shouldn't be too high 
@@ -58,7 +58,7 @@ set xtics $xTicLabel
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
 
-./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $sunSpotEditData $outputPath
+# ./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $sunSpotEditData $outputPath
 
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'${profileName}'"
@@ -83,41 +83,25 @@ EOF
 QsunDFAPlot="'${sunDFAPlot}'"
 QDFAData="'$DFAData'"
 
-min=0
-max=$nGroup
-./../../exec/HE $nGroup $min $max $DFAData $params
-tc0=$(awk 'FNR == 1 {print $1}' $params)
-tc1=$(awk 'FNR == 2 {print $1}' $params)
-tH=$(awk 'FNR == 3 {print $1}' $params)
-tMax=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
-tMin=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
+get_data_for_plot ()
+{
+    local min=$1
+    local max=$2
+    local params=$3
+    ./../../exec/HE $nGroup $min $max $DFAData $params
+    local c0=$(awk 'FNR == 1 {print $1}' $params)
+    local c1=$(awk 'FNR == 2 {print $1}' $params)
+    local chi2=$(awk 'FNR == 3 {print $1}' $params)
+    local mmax=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
+    local mmin=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
+    echo "$c0 $c1 $chi2 $mmax $mmin"
+}
 
-min=0
-max=80
-./../../exec/HE $nGroup $min $max $DFAData $s0params
-s0c0=$(awk 'FNR == 1 {print $1}' $s0params)
-s0c1=$(awk 'FNR == 2 {print $1}' $s0params)
-s0H=$(awk 'FNR == 3 {print $1}' $s0params)
-s0Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
-s0Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
-
-min=80
-max=70
-./../../exec/HE $nGroup $min $max $DFAData $s1params
-s1c0=$(awk 'FNR == 1 {print $1}' $s1params)
-s1c1=$(awk 'FNR == 2 {print $1}' $s1params)
-s1H=$(awk 'FNR == 3 {print $1}' $s1params)
-s1Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
-s1Min=$(awk -F' ' -v j=$((max + min + 1)) 'FNR == j {print $1}' $DFAData)
-
-min=150
-max=$((nGroup - min))
-./../../exec/HE $nGroup $min $max $DFAData $s2params
-s2c0=$(awk 'FNR == 1 {print $1}' $s2params)
-s2c1=$(awk 'FNR == 2 {print $1}' $s2params)
-s2H=$(awk 'FNR == 3 {print $1}' $s2params)
-s2Max=$(awk -F' ' -v j=$((min + 1)) 'FNR == j {print $1}' $DFAData)
-s2Min=$(awk -F' ' -v j=$((max + min)) 'FNR == j {print $1}' $DFAData)
+total=($(get_data_for_plot 0 $nGroup $params))
+s0=($(get_data_for_plot 0 100 $s0params))
+s1=($(get_data_for_plot 130 80 $s1params))
+min=230
+s2=($(get_data_for_plot $min $((nGroup-min)) $s2params))
 
 gnuplot << EOF
 set terminal cairolatex pdf transparent size 16cm, 9cm
@@ -127,25 +111,25 @@ set logscale xy
 set key right bottom 
 set title 'DFA$detrend analysis for q=$fluctuation'
 set ylabel 'F(s)'
-set xlabel 's'
+set xlabel 'time range'
 stats $QDFAData using 1 nooutput name 'X_'
 stats $QDFAData using 2 nooutput name 'Y_'
 set format x '$ 10^{%L}$'
 set format y '$ 10^{%L}$'
 
 set xrange [X_min:X_max]
+set xtics ("3 months" 90, "1 years" 365, "4 years" 1460, "16 years" 5840, "48 years" 17520)
 
-tf(x) = ($tMin <= x && x <= $tMax) ? $tc0 * ( x ** $tc1) : 1/0
-s0f(x) = ($s0Min <= x && x<= $s0Max) ? $s0c0 * ( x ** $s0c1) : 1/0
-s1f(x) = ($s1Min  <= x && x <= $s1Max) ? $s1c0 * ( x ** $s1c1) : 1/0
-s2f(x) = ($s2Min <= x && x <= $s2Max) ? $s2c0 * ( x ** $s2c1) : 1/0
+tf(x) = (${total[4]} <= x && x <= ${total[3]}) ? ${total[0]} * ( x ** ${total[1]}) : 1/0
+s0f(x) = (${s0[4]} <= x && x<= ${s0[3]}) ? ${s0[0]} * ( x ** ${s0[1]}) : 1/0
+s1f(x) = (${s1[4]}  <= x && x <= ${s1[3]}) ? ${s1[0]} * ( x ** ${s1[1]}) : 1/0
+s2f(x) = (${s2[4]} <= x && x <= ${s2[3]}) ? ${s2[0]} * ( x ** ${s2[1]}) : 1/0
 
 plot $QDFAData using 1:2 t 'DFA' pt 6, \
-	tf(x) t 'H = $tH' , \
- 	s0f(x) t 'H = $s0H', \
-	s1f(x) t 'H = $s1H', \
-	s2f(x) t 'H = $s2H'
-
+	tf(x) t '$\alpha$ = ${total[1]}' lw 4, \
+ 	s0f(x) t '$\alpha$ = ${s0[1]}' lw 4, \
+	s1f(x) t '$\alpha$ = ${s1[1]}' lw 4, \
+	s2f(x) t '$\alpha$ = ${s2[1]}' lw 4
 
 EOF
 

@@ -191,7 +191,7 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 	gsl_vector_memcpy(ausiliarTime, time);
 	gsl_matrix_set_all(computeTime, 1.0f);
 
-	double k;
+	size_t k;
 	for (k=1; k<=orderOfDetrend; k++)
 	{
 		gsl_matrix_set_col(computeTime, k, ausiliarTime);
