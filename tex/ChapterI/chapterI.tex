@@ -1,12 +1,129 @@
-\section{Mathematical and physical properties of Hurst Exponent} 
-\subsection{Detrended Fluctuation Analysis}
-\paragraph{Step1}
+\section{Long Memory and Time Series}
+Long memory is a relative new argument. There are several definitions, which, unless further conditions are imposed, not necessarily equivalent \cite{pipiras_taqqu_2017}.
 
-\paragraph{Step2}
-\paragraph{Step3}
-\paragraph{Step4}
-\paragraph{Step5}
-\subsection{Hurst exponent and DFA1(q=2)}
-\paragraph{SomeDim?}
-\paragraph{Fractional Gaussian noise}
-\paragraph{Fractional Brownian motion}
+For the purpose of this article, the discussion about theory of long memory is short, limited to only stationary processes, considered from a time domain perspective and focused on the interpretation of results.
+
+%da riformulare
+The following section is is a summary, mainly inspired by Pipiras et al. \cite{pipiras_taqqu_2017} and Beran \cite{Beran:2304008}. The theory about long memory time series usually concerns specific examples as fractional Brownian motion and fraction Gaussian noise, which I, for brevity, do not report.
+
+\subsection{Notation}
+To clarify, in this subsection we report some useful notation.
+
+Let be $X(t)$ and $Y(t)$ random variables.
+\begin{align}
+\text{Mean}\quad &\mu_X = \mathbb{E}[X(t)] \\
+\text{Covariance}\quad &\text{Cov}(X(t), Y(t)) = \mathbb{E}[(X(t) - \mu_X)(Y(t) - \mu_Y)] \\
+\text{Variance}\quad &\sigma^2_X = \text{Var}(X(t)) = \text{Cov}(X(t), X(t)) \\
+\text{Correlation}\quad &\text{Corr}(X(t), Y(t)) = \frac{\text{Cov}(X(t), Y(t))}{\sigma_X  \sigma_Y } \\
+\text{Autocovariance}\quad &\gamma_X(t, \tau) = \text{Cov}(X(t+\tau), X(t)) \\
+\text{Autocorrelation}\quad &\rho_X(t, \tau) = \frac{\gamma_X(t, \tau)}{\sigma^2_X}
+\end{align}
+
+\subsection{Stochastic process}
+\begin{definition}
+	A \textbf{stochastic processes} $\{X(t)\}_{t \in T}$ is a collection of random variables $X(t)$ on some probability space, indexed by the time parameter $t \in T$.
+\end{definition}
+
+A stochastic process can be distinguished in continuous or discrete if $T$ is a real or a integer set.
+
+\subsubsection{Law of stochastic processes}
+\begin{definition}
+	A stochastic process $\{X(t)\}_{t \in T}$ \textbf{finite-dimensional distribution} is the probability distribution
+	\begin{equation}
+		\mathcal{P}(X(t_1) \le x_1, \dots, X(t_n) \le x_n) \qquad t_i \in T, x_i \in \R, n \ge 1
+	\end{equation} 
+	of a random vertical vector $(X(t_1), \dots, X(t_n))'$ with $t_i \in T, x_i \in \R, n \ge 1$. 
+\end{definition}
+
+The law of $\{X(t)\}_{t \in T}$ is characterized by its finite-dimensional distribution.
+
+Two stochastic processes $\{X(t)\}_{t \in T}$, $\{Y(t)\}_{t \in T}$ have the same law if their finite-dimensional distributions are identical. Equality in distribution is denoted by $\deq$. Thus $\{X(t)\}_{t \in T} \deq \{Y(t)\}_{t \in T}$ means
+\begin{equation}
+	\mathcal{P}(X(t_1) \le x_1, \dots, X(t_n) \le x_n) = \mathcal{P}(Y(t_1) \le x_1, \dots, Y(t_n) \le x_n) \qquad t_i \in T, x_i \in \R, n \ge 1
+\end{equation} 
+
+\subsection{Stationary}
+Behind stationary, there is the idea of a process, whose probabilistic properties do not change with time. This leads to the following definition.
+\begin{definition}\label{def:strictstationary} 
+	A stochastic process $\{X (t)\}_{t \in T}$ is \textbf{strictly stationary} if $T = \R$ or $\Z$ or $\R_+$ or $\Z_+$, and for any $h \in T$
+	\begin{equation}
+		\{X(t)\}_{t \in T} \deq \{X(t + h)\}_{t \in T} 
+	\end{equation}
+\end{definition}
+
+However, this is sometimes too strong a requirement. Instead, one often requires instead that only second-order properties do not change with time.
+\begin{definition}
+	A stochastic process $\{X (t)\}_{t \in T}$ is \textbf{weakly or second-order stationary} if $T = \R$ or $\Z$, and for any $t, s \in T$
+	\begin{equation}
+		\mathbb{E}[X(t)] = \mathbb{E}[X(0)] \quad \textnormal{Cov}(X(t), X(s)) = \textnormal{Cov}(X(t-s), X(0))
+	\end{equation}
+\end{definition}
+
+The time difference $h = t - s$ above is called the \emph{time lag}.
+
+For a stationary process autocovariance and autocorrelation become particularly interesting, because they do not depend on the choice of $t$.
+\begin{equation}
+	\gamma_X(h) = \text{Cov}(X(t+h), X(t)) = \text{Cov}(X(h), X(0)) \qquad \rho_X(h) = \frac{\gamma_X(h)}{\gamma_X(0)}
+\end{equation}
+\subsection{Time series}
+Time series is a common term which indicates a discrete set of data sampled at certain times. However, in this section, a more strict and precise definition will be used.
+\begin{definition}
+	A discrete weakly stationary stochastic process $\{X_n\}_{n \in \Z}$ is called \textbf{time series}.
+\end{definition}
+
+Notice that in a experimental view, this definition is not usable. In fact, data points are a finite set and a regular interval between their sampling times is not guaranteed.
+
+\subsection{Long Range Dependent}
+Long-range dependence, also called long memory or strong dependence or long range correlation, is usually defined for time series. However can be generalized for continuous stationary processes easily \cite{pipiras_taqqu_2017} and for non-stationary ones \cite{Movahed_2006}.
+
+It is useful to introduce this type of function.
+\begin{definition}
+	A function $L$ is \textbf{slowly varying at infinity} if it is positive on $[c, \infty)$ with $c \le 0$ and, for any $a > 0$,
+	\begin{equation}
+		\lim_{u \to \infty} \frac{L(au)}{L(a)} = 1
+	\end{equation}
+\end{definition}
+
+In many instances, for example in statistical estimation, the slowly varying
+functions are such that $L(u) \sim \text{const} > 0$. 
+
+As said before, there are several definition of long memory. Only the most interesting and practical one are here reported.
+\begin{definition}
+	A time series $X = \{ X_n \}_{n \in \Z}$ is called long-range dependent if one of the non-equivalent conditions \autoref{cond:1}, \autoref{cond:2}, \autoref{cond:3} holds. The parameter $d \in (0, 1/2)$ is called a long-range dependence parameter.
+\end{definition}
+
+\begin{condition}\label{cond:1}
+	The autocovariance function of the time series $X = \{ X_n \}_{n \in \Z}$ satisfies
+	\begin{equation}
+		\gamma_X(k) = L_1(k) k^{2d -1} \qquad k=0,1,\dots
+	\end{equation}
+	where $L_1$ is a slowly varying function at infinity.
+\end{condition}
+
+Can be shown that condition \autoref{cond:1} implies the following ones.\\ 
+\begin{condition}\label{cond:2}
+	The autocovariances of the time series $X = \{ X_n \}_{n \in \Z}$ are not absolutely summable:
+	\begin{equation}
+		\sum_{k=-\infty}^{+\infty} \abs{\gamma_X(k)} = \infty
+	\end{equation}
+\end{condition}
+
+\begin{condition}\label{cond:3}
+	The time series $X = \{ X_n \}_{n \in \Z}$ satisfies
+	\begin{equation}
+		\textnormal{Var}(X_1 + \dots + X_N) = L_2(N) N^{2d + 1} \qquad N = 1, 2, \dots
+	\end{equation}
+	where $L_2$ is a slowly varying function at infinity.
+\end{condition}
+
+\begin{definition}
+	A time series $X = \{ X_n \}_{n \in \Z}$ is called \textbf{short-range
+	dependent} if its autocovariances are absolutely summable:
+	\begin{equation}
+		\sum_{k=-\infty}^{+\infty} \abs{\gamma_X(k)} < \infty
+	\end{equation}
+\end{definition}
+For SRD series, one could expect negative d. 
+
+\subsection{Self-similarity}
+

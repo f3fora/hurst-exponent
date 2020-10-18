@@ -1,9 +1,6 @@
 \section{Introduction} 
-The main purpose of the present work is to show how to estimate the Hurst exponent for a mono-dimensional time series, using the Detrended Fluctuation Analysis and how to interpret the result in terms of noise. \\
+The main purpose of the present work is to show how to estimate the Hurst exponent for a mono-dimensional time series, using the Detrended Fluctuation Analysis and how to interpret the result. \\
 This technique will be developed as a C program and applied to a time series about sun spots.
-
-% A time series is a sequence of data points indexed in time order, mathematically ${ \{ \vec{x}_{i} \in \mathbb{R}^n | i=1, \dots, k \} }$.  
-
 
 \subsection{Hurst Exponent}
 The Hurst exponent is a dimensionless estimator used to evaluate self-similarity and long-range correlation properties of time series. \\
@@ -11,6 +8,13 @@ It was introduced by Harold Edwin Hurst to describe the regularities of Nile wat
 He defined it as
 \begin{equation}
 \mathbb{E} \left[\frac{R(N)}{S(N)}\right] \propto N^{H} \quad \text{for } N \to \infty
+\label{eq:defHE}
 \end{equation}
 where $H \in \left[0, 1 \right] $ is the Hurst exponent, $S (N)$ is the standard deviation and $R(N)$ is the range, the difference between maximum and minimum values of a given time series.
 
+\subsection{Detrended Fluctuation Analysis}
+It is often not advisable to estimate the Hurst exponent of measured data by \autoref{eq:defHE}, because often them carry not interesting and explicit trends, or, more often, do not exhibit a clear scaling.
+
+So it is useful to introduce a particular way of detrending, called Detrended Fluctuation Analysis (DFA), which was developed by Peng et al. \cite{PhysRevE.49.1685} for the analysis of DNA.
+
+The advantages of DFA over other methods are that of permitting the detection of long-range correlations in time series with non-stationary and of avoiding the spurious detection of apparent long-range correlations that are an artefact of non-stationary.

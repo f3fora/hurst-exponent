@@ -1,4 +1,4 @@
-\usepackage[italian]{babel}
+\usepackage[UKenglish]{babel}
 
 \usepackage{hyperref}
 \usepackage{graphicx}
@@ -9,13 +9,13 @@
 \usepackage[T1]{fontenc}
 \usepackage{ucs}
 \usepackage[utf8]{inputenc}
+\usepackage{appendix}
 
 \usepackage{siunitx}
 \sisetup{separate-uncertainty=true}
 \sisetup{mode=text,range-phrase = {\text{~-~}}}
 
 \usepackage{physics}
-
 
 \usepackage{csvsimple,longtable,booktabs,filecontents}
 
@@ -37,10 +37,6 @@
 \usepackage{nicefrac}
 \usepackage{bbold}
 
-
-
-
-
 \usepackage[%
 format=hang,
 format=plain,
@@ -55,21 +51,23 @@ width=0.8\textwidth,
 \renewcommand{\thetable}{\arabic{table}}
 \renewcommand{\thesubtable}{\roman{subtable}}
 
-\usepackage{braket}
+\numberwithin{equation}{subsection}
+
 \newcommand{\numberset}{\mathbb}
 \newcommand{\N}{\numberset{N}}
 \newcommand{\R}{\numberset{R}}
 \newcommand{\Q}{\numberset{Q}}
-
+\newcommand{\Z}{\numberset{Z}}
 
 \newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
-
 \newcommand{\rom}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
-
 \setlist[itemize]{label=\textbullet}
 
 \usepackage{titling}
-
 \renewcommand\maketitlehooka{\null\mbox{}\vfill}
-
 \renewcommand\maketitlehookd{\vfill\null}
+\newcommand{\deq}{\overset{d}{=}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{definition}{Definition}[section]
+\newtheorem{condition}{Condition}[definition]

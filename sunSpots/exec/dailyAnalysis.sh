@@ -16,10 +16,11 @@ numberOfWindows=10
 
 # Paths to find data and to save plots
 sunSpotOriginalData="../data/raw/SN_d_tot_V2.0.csv"
-sunSpotPlot="../img/dataPlot.tex"
-sunProfilePlot="../img/profilePlot.tex"
-sunDFAPlot="../img/DFAPlot.tex"
-outputPath="../data/processed/"
+imgPath="../img/daily/"
+sunSpotPlot="${imgPath}dataPlot.tex"
+sunProfilePlot="${imgPath}profilePlot.tex"
+sunDFAPlot="${imgPath}DFAPlot.tex"
+outputPath="../data/processed/daily/"
 profileName="${outputPath}profile.dat"
 sunSpotEditData="${outputPath}editedSN.dat"
 DFAData="${outputPath}DFA.dat"
@@ -77,7 +78,7 @@ set format y '$ %2.0t \times10^{%L}$'
 set xrange [X_min:X_max]
 set yrange [Y_min:Y_max*1.1]
 
-plot $QprofileData using 1:2 notitle pt 1
+plot $QprofileData using 1:2 notitle pt 0
 EOF
 
 QsunDFAPlot="'${sunDFAPlot}'"
@@ -97,10 +98,11 @@ get_data_for_plot ()
     echo "$c0 $c1 $chi2 $mmax $mmin"
 }
 
-total=($(get_data_for_plot 0 $nGroup $params))
-s0=($(get_data_for_plot 0 100 $s0params))
-s1=($(get_data_for_plot 130 80 $s1params))
-min=230
+#total=($(get_data_for_plot 0 $nGroup $params))
+total=($(get_data_for_plot 0 29 $params))
+s0=($(get_data_for_plot 55 60 $s0params))
+s1=($(get_data_for_plot 137 72 $s1params))
+min=221
 s2=($(get_data_for_plot $min $((nGroup-min)) $s2params))
 
 gnuplot << EOF
@@ -118,14 +120,20 @@ set format x '$ 10^{%L}$'
 set format y '$ 10^{%L}$'
 
 set xrange [X_min:X_max]
-set xtics ("3 months" 90, "1 years" 365, "4 years" 1460, "16 years" 5840, "48 years" 17520)
+set yrange [Y_min:Y_max*1.1]
+set xtics ("4 months" 120, "1 years" 365, "4 years" 1460, "16 years" 5840, "48 years" 17520)
 
 tf(x) = (${total[4]} <= x && x <= ${total[3]}) ? ${total[0]} * ( x ** ${total[1]}) : 1/0
 s0f(x) = (${s0[4]} <= x && x<= ${s0[3]}) ? ${s0[0]} * ( x ** ${s0[1]}) : 1/0
 s1f(x) = (${s1[4]}  <= x && x <= ${s1[3]}) ? ${s1[0]} * ( x ** ${s1[1]}) : 1/0
 s2f(x) = (${s2[4]} <= x && x <= ${s2[3]}) ? ${s2[0]} * ( x ** ${s2[1]}) : 1/0
 
-plot $QDFAData using 1:2 t 'DFA' pt 6, \
+set arrow from 120,graph(0,0) to 120,graph(1,1) nohead
+set arrow from 510,graph(0,0) to 510,graph(1,1) nohead
+set arrow from 3960,graph(0,0) to 3960,graph(1,1) nohead
+set arrow from 13500,graph(0,0) to 13500,graph(1,1) nohead
+
+plot $QDFAData using 1:2 t 'DFA' pt 0, \
 	tf(x) t '$\alpha$ = ${total[1]}' lw 4, \
  	s0f(x) t '$\alpha$ = ${s0[1]}' lw 4, \
 	s1f(x) t '$\alpha$ = ${s1[1]}' lw 4, \

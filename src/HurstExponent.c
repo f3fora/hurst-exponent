@@ -18,17 +18,18 @@ void getHurstExponent(gsl_matrix *DFASpace, gsl_vector *c, gsl_matrix *cov, doub
 	gsl_vector *weights = gsl_vector_alloc(DFASpace->size1);
 	gsl_matrix *logS = gsl_matrix_alloc(DFASpace->size1, 2);
 	gsl_matrix_set_all(logS, 1.0f);	
+    gsl_vector_set_all(weights, 1.0f);
 	size_t i;
 	for (i=0; i<DFASpace->size1 - 1; i++)
 	{
 		gsl_vector_set(logDFA, i, log(gsl_matrix_get(DFASpace, i, 1)));
 		gsl_matrix_set(logS, i, 1, log(gsl_matrix_get(DFASpace, i, 0)));
-		gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i+1, 1) - gsl_matrix_get(logS, i, 1)));
+		//gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i+1, 1) - gsl_matrix_get(logS, i, 1)));
 	}
 
 	gsl_vector_set(logDFA, i, log(gsl_matrix_get(DFASpace, i, 1)));
 	gsl_matrix_set(logS, i, 1, log(gsl_matrix_get(DFASpace, i, 0)));
-	gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i, 1) - gsl_matrix_get(logS, i-1, 1)));
+	//gsl_vector_set(weights, i, abs(gsl_matrix_get(logS, i, 1) - gsl_matrix_get(logS, i-1, 1)));
 
 	gsl_multifit_linear_workspace *work  = gsl_multifit_linear_alloc(DFASpace->size1, 2);  
   	gsl_multifit_wlinear(logS, weights,logDFA, c, cov, chisq, work);
