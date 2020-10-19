@@ -183,7 +183,7 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 	/*
 	 * calculate the space of DFA and s;
 	 */
-	gsl_matrix *DFASpace = gsl_matrix_alloc( numberOfPoints, 2 );
+	gsl_matrix *DFASpace = gsl_matrix_alloc( numberOfPoints , 2 );
 
 	gsl_vector *ausiliarTime=gsl_vector_alloc(time->size);
 	gsl_matrix *computeTime=gsl_matrix_alloc(time->size, orderOfDetrend+1);
@@ -212,7 +212,7 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 	double i;
 	double aus;
 	size_t j = 0 ;
-	for (i=first; i<last+step; i+=step) 
+	for (i=first; i<last+step/2; i+=step) 
 	{
 		numberOfSegment = exp(i);
 		lenghtOfSegment = (end - begin) / numberOfSegment;

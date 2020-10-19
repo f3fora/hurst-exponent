@@ -59,7 +59,10 @@ set xtics $xTicLabel
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
 
-# ./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $sunSpotEditData $outputPath
+aus=$((numberOfPoints/(detrend+3)))
+maxGroup=$(( maxGroup < aus ?  maxGroup : aus))
+
+./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $sunSpotEditData $outputPath
 
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'${profileName}'"
@@ -99,12 +102,10 @@ get_data_for_plot ()
 }
 
 #total=($(get_data_for_plot 0 $nGroup $params))
-total=($(get_data_for_plot 0 76 $params))
-s0=($(get_data_for_plot 90 45 $s0params))
-s1=($(get_data_for_plot 155 70 $s1params))
-#min=250
-#s2=($(get_data_for_plot $min $((nGroup-min)) $s2params))
-s2=($(get_data_for_plot 235 60 $s2params))
+total=($(get_data_for_plot 0 33 $params))
+s0=($(get_data_for_plot 34 $((102 - 34)) $s0params))
+s1=($(get_data_for_plot 103 $((218 - 103)) $s1params))
+s2=($(get_data_for_plot 218 $((nGroup - 218)) $s2params))
 
 gnuplot << EOF
 set terminal cairolatex pdf transparent size 16cm, 9cm
