@@ -1,8 +1,12 @@
-\section{Estimation of Hurst Exponent}
-\subsection{Multifractal Detrended Fluctuation Analysis}
-Multifractal Detrended Fluctuation Analysis (MF-DFA) is a generalization of the standard DFA, which use only the second moment $q = 2$. 
+\section{Detrended Fluctuation Analysis}
 
-Let describe the procedure for a continuous stochastic process $\{X(t)\}_{t\in [0, T]}$ and then apply it to a time series $\{ X_n \}_{n = 1, \dots, N} $ sampled at time $t_n$, underlining some tips and tricks. 
+
+The purpose of DFA is to estimate the variance of the partials sum of the series $X = \{ X_n \}_{n \in \Z}$. In this way, the \autoref{cond:3} allows to estimate the long-range dependence parameter. 
+
+The Multifractal Detrended Fluctuation Analysis (MF-DFA) is a generalization of the standard DFA, which use only the second moment $q = 2$. 
+
+\subsection{Multifractal Detrended Fluctuation Analysis}
+The procedure is described for a continuous stochastic process $\{X(t)\}_{t\in [0, T]}$ and then applied to a time series $\{ X_n \}_{n = 1, \dots, N} $ sampled at time $t_n$, underlining some tips and tricks. 
 
 Notice that the symbology of $\{ X_n \}_{n = 1, \dots, N} $ is assumed as convention and, to be consistent with the previous one, should be
 $\{ X(t) \}_{t \in T_N}$ where $T_N$ is the set of the sampling times $T_N \equiv \{ t_n\}_{n = 1, \dots, N}$ with $t_1 = 0$ and $t_N = T$ \\
@@ -103,10 +107,8 @@ For big $\tau$, $\varepsilon_n$ is negligible, and so $l_n(\tau) \approx l(\tau)
 \subsection{Hurst exponent and DFAk(q=2)}
 The $\alpha(q)$ parameter can be interpreter in term of Hurst exponent $H$. There's a linear relationship between $\alpha(q=2)$ and $H$.
 
-If $X_n$ is a stationary time series, $Y_n$ will be a self-similarity process, and so $0 < \alpha(q = 2) < 1$. So, the exponent $\alpha(2)$ is identical to the Hurst exponent $H$.\\ %cfr first implies of def...
-% this should be explained better
-For a non-stationary signal, instead $\alpha(q = 2) > 1$. In this case the relation between the exponents $\alpha(2)$ and $H$ will be
-$H = \alpha(q = 2)-1$. \\
-The exponent $\alpha(q)$ is known as the generalized Hurst exponent.
+If $X_n$ is a stationary time series, $Y_n$ will be a self-similarity process, and so $0 < \alpha(q = 2) < 1$. For \autoref{cond:3}, the exponent $\alpha(2)$ is identical to the Hurst exponent $H$.
 
-Usually, the natural choice of $k$ is $k=1$.
+For a non-stationary signal, instead $\alpha(q = 2) > 1$. In this case the relation between the exponents $\alpha(2)$ and $H$ will be $H = \alpha(q = 2)-1$ \cite{Movahed_2006}.  
+
+The exponent $\alpha(q)$ is known as the generalized Hurst exponent.

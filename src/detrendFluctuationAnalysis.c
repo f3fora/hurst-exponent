@@ -204,18 +204,22 @@ gsl_matrix *getDFASpace(gsl_vector *time, gsl_vector *profile, size_t orderOfDet
 	double begin = gsl_vector_get(time, 0);
 	double end = gsl_vector_get(time, time->size - 1);
 	double lenghtOfSegment;
-	double step = log(maxNumberOfSegment - minNumberOfSegment + 1) / (numberOfPoints -1);
+	double first = log(minNumberOfSegment);
+	double last = log(maxNumberOfSegment);
+	double step = (last - first) / (numberOfPoints -1);
 	double numberOfSegment;
 
-	size_t i;
+	double i;
 	double aus;
-	for (i=0; i<numberOfPoints; i++) 
+	size_t j = 0 ;
+	for (i=first; i<last+step; i+=step) 
 	{
-		numberOfSegment = minNumberOfSegment - 1 + exp(i*step);
-		lenghtOfSegment = (end - begin) / (numberOfSegment);
+		numberOfSegment = exp(i);
+		lenghtOfSegment = (end - begin) / numberOfSegment;
 		aus = getVarianceOfSeries(time, computeTime, profile, orderOfDetrend, orderOfFluctuation, (size_t)numberOfSegment, lenghtOfSegment, numberOfWindows);
-		gsl_matrix_set(DFASpace, i, 0, lenghtOfSegment);
-		gsl_matrix_set(DFASpace, i, 1, aus);
+		gsl_matrix_set(DFASpace, j, 0, lenghtOfSegment);
+		gsl_matrix_set(DFASpace, j, 1, aus);
+		j++;
 	}
 	
 	gsl_matrix_free(computeTime);

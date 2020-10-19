@@ -3,14 +3,14 @@ The main purpose of the present work is to show how to estimate the Hurst expone
 This technique will be developed as a C program and applied to a time series about sun spots.
 
 \subsection{Hurst Exponent}
-The Hurst exponent is a dimensionless estimator used to evaluate self-similarity and long-range correlation properties of time series. \\
+The Hurst exponent is a dimensionless estimator used to evaluate self-similarity and long-range dependence properties of time series. \\
 It was introduced by Harold Edwin Hurst to describe the regularities of Nile water level. \\
 He defined it as
 \begin{equation}
 \mathbb{E} \left[\frac{R(N)}{S(N)}\right] \propto N^{H} \quad \text{for } N \to \infty
 \label{eq:defHE}
 \end{equation}
-where $H \in \left[0, 1 \right] $ is the Hurst exponent, $S (N)$ is the standard deviation and $R(N)$ is the range, the difference between maximum and minimum values of a given time series.
+where $H \in \left[0, 1 \right] $ is the Hurst exponent, $S (N)$ is the standard deviation and $R(N)$ is the range, the difference between maximum and minimum values of a given time series with $N$ points.
 
 \subsection{Detrended Fluctuation Analysis}
 It is often not advisable to estimate the Hurst exponent of measured data by \autoref{eq:defHE}, because often them carry not interesting and explicit trends, or, more often, do not exhibit a clear scaling.

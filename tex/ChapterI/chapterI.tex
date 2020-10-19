@@ -26,7 +26,6 @@ Let be $X(t)$ and $Y(t)$ random variables.
 
 A stochastic process can be distinguished in continuous or discrete if $T$ is a real or a integer set.
 
-\subsubsection{Law of stochastic processes}
 \begin{definition}
 	A stochastic process $\{X(t)\}_{t \in T}$ \textbf{finite-dimensional distribution} is the probability distribution
 	\begin{equation}
@@ -100,7 +99,7 @@ As said before, there are several definition of long memory. Only the most inter
 	where $L_1$ is a slowly varying function at infinity.
 \end{condition}
 
-Can be shown that condition \autoref{cond:1} implies the following ones.\\ 
+Can be shown that \autoref{cond:1} implies the following ones.\\ 
 \begin{condition}\label{cond:2}
 	The autocovariances of the time series $X = \{ X_n \}_{n \in \Z}$ are not absolutely summable:
 	\begin{equation}
@@ -116,14 +115,72 @@ Can be shown that condition \autoref{cond:1} implies the following ones.\\
 	where $L_2$ is a slowly varying function at infinity.
 \end{condition}
 
-\begin{definition}
-	A time series $X = \{ X_n \}_{n \in \Z}$ is called \textbf{short-range
-	dependent} if its autocovariances are absolutely summable:
+\begin{definition}\label{def:shortmemory}
+	A time series $X = \{ X_n \}_{n \in \Z}$ is called \textbf{short-range dependent} if its autocovariances are absolutely summable:
 	\begin{equation}
 		\sum_{k=-\infty}^{+\infty} \abs{\gamma_X(k)} < \infty
 	\end{equation}
 \end{definition}
-For SRD series, one could expect negative d. 
+
+There is an interesting special type of short-range dependent series, whose autocovariances are absolutely summable as in \autoref{def:shortmemory}, but they sum up to zero.
+\begin{definition}
+	A short-range dependent time series $X = \{ X_n \}_{n \in \Z}$ is called \textbf{antipersistent} if
+	\begin{equation}
+		\sum_{k=-\infty}^{+\infty} \abs{\gamma_X(k)} = 0
+	\end{equation}
+\end{definition}
+
+For an antipersistent time series, $d < 0$.
 
 \subsection{Self-similarity}
 
+\begin{definition}\label{def:self}
+	A stochastic process $\{ X(t) \}_{t \in \R}$ is called \textbf{self-similar} if there is $H > 0$ such that, for all $c > 0$,
+	\begin{equation}
+		\{ X(ct) \}_{t \in \R} \deq \{ c^H X(t) \}_{t \in \R}
+	\end{equation}
+	
+	The parameter H is called the self-similarity parameter (also Hurst index or Hurst parameter or \textbf{Hurst exponent}).
+\end{definition}
+
+Actually self-similarity is equivalent to $H = 1$. The correct term should be "self-affinity". However, the \autoref{def:self} is acceptable, because it is wildly used. \\
+Intuitively, self-similarity means that a stochastic process scaled in time (that is, plotted with a different time scale) looks statistically the same as the original process when properly rescaled in space. 
+
+A self-similar process cannot be strictly stationary, however can have stationary increment.
+
+\begin{definition}\label{def:strictincrem}
+	A stochastic process $\{X (t)\}_{t \in T}$ has \textbf{strictly stationary increments} if $T = \R$ or $\Z$ or $\R_+$ or $\Z_+$, and for any $h \in T$
+	\begin{equation}
+		\{X(t+h) - X(h)\}_{t \in T} \deq \{X(t) - X(0) \}_{t \in T} 
+	\end{equation}
+\end{definition}
+
+The \autoref{def:strictincrem} implies that, for a process $\{X (t)\}_{t \in T}$ with stationary increment and for any $h \in \R$, the process
+\begin{equation}
+	Y(t) = X(t+h) - X(t) \qquad t \in \R
+\end{equation}
+is stationary.
+
+
+\subsection{Relationship between Long-Range Dependent and Self Similarity}
+Consider a self-similar process $Y = \{ Y(t )\}_{t \in \R}$ with strict stationary increment and $H \in (0, 1)$ and a strict stationary series $X_n = Y(n) - Y(n-1)$ with $n \in \Z$.
+
+The series $X$ has mean $\mu_X = 0$, $\mathbb{E}X^2_n = \mathbb{E}Y^2(1)$ and autocovariance 
+\begin{equation}\label{eq:autocovsssi}
+	\gamma_X(k) \sim \mathbb{E}Y^2(1) H (2H -1) k^{2H-2} \qquad \text{as $k \to \infty$}
+\end{equation}
+
+Comparing \autoref{cond:1} and \autoref{eq:autocovsssi}, the series $X$ is long-range dependent if $H \in (\nicefrac{1}{2}, 1)$, with
+\begin{equation}
+	H = d + \frac{1}{2}
+\end{equation}
+
+\subsection{Summary}
+Consider a time series $X = \{X_n\}_{n \in \Z}$, characterized by the Hurst exponent $H \in (0, 1]$. $X$ is defined strictly self-similar if $H = 1$, else self-affinal.
+
+Moreover, $X$ is
+\begin{itemize}
+	\item short range dependent and all autocovariances at non zero time lags are zero, if $H =\nicefrac{1}{2}$ \cite{Beran:2304008}
+	\item long range dependent if $H \in (\nicefrac{1}{2}, 1)$
+	\item antipersistent short range dependent if $H \in (0, \nicefrac{1}{2})$
+\end{itemize}
