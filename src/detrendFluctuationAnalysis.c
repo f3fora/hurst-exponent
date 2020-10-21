@@ -86,6 +86,28 @@ double getVarianceOfSegment(gsl_vector *partialProfile, gsl_matrix *partialTime)
 }
 
 
+gsl_vector *subvector_copy(gsl_vector *v, size_t offset, size_t n)
+{
+	gsl_vector *c = gsl_vector_alloc(n);
+	size_t i;
+	for (i=0; i<n; i++){
+		gsl_vector_set(c, i, gsl_vector_get(v, i+offset)); 
+	}
+	return c;
+}
+
+gsl_matrix *rows_submatrix_copy(gsl_matrix *m, size_t offset, size_t n)
+{
+	gsl_matrix *c = gsl_matrix_alloc(n, m->size2);
+	size_t i;
+	gsl_vector *r = gsl_vector_alloc(m->size2);
+	for (i=0; i<n; i++){
+		gsl_matrix_get_row(r, m, i+offset); 
+		gsl_matrix_set_row(c, i, r);
+	}
+	return c;
+}
+
 double getLocalFit(gsl_matrix *cTime, gsl_vector* profile, size_t i, size_t s, size_t orderOfDetrend)
 {
 	/*
@@ -94,10 +116,20 @@ double getLocalFit(gsl_matrix *cTime, gsl_vector* profile, size_t i, size_t s, s
 	if (s <= orderOfDetrend + 1)	// if the number of points is minor or less of grade of freedom the chisq is zero
 		return 0.0f;
 
-	gsl_vector_view partialProfile = gsl_vector_subvector(profile, i, s);
-	gsl_matrix_view partialTime = gsl_matrix_submatrix(cTime, i, 0, s, cTime->size2);
+	/*
+	gsl_vector_view viewProfile = gsl_vector_subvector(profile, i, s);
+	gsl_matrix_view viewTime = gsl_matrix_submatrix(cTime, i, 0, s, cTime->size2);
+	gsl_vector *partialProfile = gsl_vector_alloc(s);
+	gsl_vector_memcpy(partialProfile, &viewProfile.vector);
+	gsl_matrix *partialTime = gsl_matrix_alloc(s, cTime->size2);
+	gsl_matrix_memcpy(partialTime, &viewTime.matrix);
+	*/
+	gsl_vector *partialProfile = subvector_copy(profile, i, s);
+	gsl_matrix *partialTime = rows_submatrix_copy(cTime, i, s);
 
-	double chisq = getVarianceOfSegment(&partialProfile.vector, &partialTime.matrix) / (s - orderOfDetrend - 1); 
+	double chisq = getVarianceOfSegment(partialProfile, partialTime) / (s - orderOfDetrend - 1); 
+	gsl_vector_free(partialProfile);
+	gsl_matrix_free(partialTime);
 
 	return chisq;
 }

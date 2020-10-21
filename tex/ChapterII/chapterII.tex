@@ -17,14 +17,14 @@ Define the "profile" $Y(t)$ of $X(t)$.
 \begin{equation}
 	Y( t ) = \int_{0}^{t} dt' (X( t' ) - \bar{X} ) 
 \end{equation}
-where $\bar{x}$ is the mean of $x(t)$ computed on the whole time series.
+where $\bar{X}$ is the mean of $X(t)$ computed on the whole time series.
 \begin{equation}
 	\bar{X} = \frac{1}{T} \int_{0}^{T} dt' X( t' )
 \end{equation}
 
 Subtracting the mean is actually not necessary, because it will be remove anyway in linear detrending in \autoref{step3}.
 
-For $x_n$, instead, the profile is defined as 
+For $X_n$, instead, the profile is defined as 
 \begin{equation}
 	Y_n = \sum_{i=1}^{n} \left( X_i - \bar{X} \right)
 \end{equation}
@@ -53,14 +53,14 @@ Determinate the variance $ f_2^{( k )}( t, \tau ) $ between the profile $ y(t) $
 	f_{2 \ +}^{( k )}( t, \tau ) \equiv \frac{1}{\tau} \int_{t}^{t+\tau} dt' \left( Y( t' ) - g^{( k )}(t, \tau, t')  \right)^2
 \end{equation}
 
-Since the detrending of the time series is done by the subtraction of the polynomial fits from the profile $y(t)$, different order DFA differ in their capability of eliminating trends in the series. In (MF-)DFA$k$ ($k$th-order (MF-)DFA) trends of order $k$ in the profile $Y(t)$ (or, equivalently, of order $k-1$ in the original series $x(t)$) are eliminated. 
+Since the detrending of the time series is done by the subtraction of the polynomial fits from the profile $Y(t)$, different order DFA differ in their capability of eliminating trends in the series. In (MF-)DFA$k$ ($k$th-order (MF-)DFA) trends of order $k$ in the profile $Y(t)$ (or, equivalently, of order $k-1$ in the original series $x(t)$) are eliminated. 
 
 Analogously let introduce $g_n^{(k)}(\tau, t_i)$ with $t_i \in [t_n, t_n + \tau]$, which contains $l_n(\tau)$ points, and $f_{2\ n}^{( k )}( \tau )$.
 \begin{equation}
 	f_{2\ n \ +}^{( k )}( \tau ) \equiv \frac{1}{l_n(\tau) - k - 1} \sum_{i=n}^{n + l_n(\tau)} \left(Y_i - g_n^{k} (\tau, t_i) \right)
 \end{equation}
 
-$f_{2\ n}^{( k )}( \tau )$ is the reduced-chi-square $\chi^2_r$ function with the correct normalization $l_n(\tau) - k - 1$ and assuming errors unitary. In fact, for $k$th order detrending, a time window containing $l_n(\tau) = k + 1$ sample points yields exactly zero fluctuation. This also justify the condition $\tau \ge k+2$ in \autoref{step2}.\\
+$f_{2\ n}^{( k )}( \tau )$ is the variance of the sum of the series $\{ X^{(l_n(\tau))}_i\}_{i= n, \dots, n+l_n(\tau)} $ with the correct normalization $l_n(\tau) - k - 1$. In fact, for $k$th order detrending, a time window containing $l_n(\tau) = k + 1$ sample points yields exactly zero fluctuation. This also justify the condition $\tau \ge k+2$ in \autoref{step2}.\\
 Moreover, the results for large $\tau$ become unreliable, because of the few time windows who can be chosen. So often only $\tau \le \nicefrac{T}{4}$ is used. 
 
 $f_{2 \ +}^{( k )}( t, \tau )$ and $f_{2\ n \ +}^{( k )}( \tau )$ are defined in an asymmetric way. In fact $t \in [0, T-\tau]$ and $n = 1 \dots, N - l_n(\tau)$. 
@@ -74,7 +74,7 @@ To remove this asymmetry, integral and summary can be also computed "starting fr
 	f_{2\ n \ -}^{( k )}( \tau ) \equiv \frac{1}{l_n(\tau) - k - 1} \sum_{i=n - l_n(\tau)}^{n} \left(Y_i - g_n^{k} (\tau, t_i) \right)
 \end{equation}
 
-Practically, calculate $f_{2\ n}^{( k )}( \tau )$ for each $n$ is useless and demands a lot of time.  Instead compute $f_{2\ n}^{( k )}( \tau )$ only for $n$, where $t_n$ is the closest to a multiply of $\Delta \tau = \nicefrac{\tau}{m}$ with $m \in \N$, is a good approximation. 
+Practically, calculate $f_{2\ n}^{( k )}( \tau )$ for each $n$ is useless and demands a lot of time.  Instead compute $f_{2\ n}^{( k )}( \tau )$ only for $n$, where $t_n$ is the closest to a multiply of $\Delta \tau = \nicefrac{\tau}{m}$ with $m \in \N$, is a good approximation.
 
 \subsubsection{Momentum}\label{step4}
 $F_q^{( k )}(\tau )$ is the momentum of order $q$ over all time windows of length $\tau$.
@@ -95,7 +95,7 @@ log–log plots of $F_q^{( k )}(\tau )$ versus $\tau$.
 \end{equation}
 In general, the exponent $\alpha(q)$ may depend on $q$. 
 
-A tip is to choose $\log(\tau)$ equally spaced and calculate $F_q^{( k )}(\tau )$ for each $\tau$. Then fit the following equation.
+A tip is to choose equally spaced $\log(\tau)$ and calculate $F_q^{( k )}(\tau )$ for each $\tau$. Then fit the following equation.
 \begin{equation}
 	\log(F_q^{( k )}(\tau )) = C + \alpha(q) \log(\tau)
 \end{equation}
@@ -109,6 +109,6 @@ The $\alpha(q)$ parameter can be interpreter in term of Hurst exponent $H$. Ther
 
 If $X_n$ is a stationary time series, $Y_n$ will be a self-similarity process, and so $0 < \alpha(q = 2) < 1$. For \autoref{cond:3}, the exponent $\alpha(2)$ is identical to the Hurst exponent $H$.
 
-For a non-stationary signal, instead $\alpha(q = 2) > 1$. In this case the relation between the exponents $\alpha(2)$ and $H$ will be $H = \alpha(q = 2)-1$ \cite{Movahed_2006}.  
+For a non-stationary signal, instead $\alpha(q = 2) > 1$. In this case the relation between exponents $\alpha(2)$ and $H$ will be $H = \alpha(q = 2)-1$ \cite{Movahed_2006}.  
 
 The exponent $\alpha(q)$ is known as the generalized Hurst exponent.

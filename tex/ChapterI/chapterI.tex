@@ -1,14 +1,11 @@
-\section{Long Memory and Time Series}
+\section{Long memory of time series}
 Long memory is a relative new argument. There are several definitions, which, unless further conditions are imposed, not necessarily equivalent \cite{pipiras_taqqu_2017}.
 
 For the purpose of this article, the discussion about theory of long memory is short, limited to only stationary processes, considered from a time domain perspective and focused on the interpretation of results.
 
-%da riformulare
-The following section is is a summary, mainly inspired by Pipiras et al. \cite{pipiras_taqqu_2017} and Beran \cite{Beran:2304008}. The theory about long memory time series usually concerns specific examples as fractional Brownian motion and fraction Gaussian noise, which I, for brevity, do not report.
+The following section is a summary, mainly inspired by Pipiras et al. \cite{pipiras_taqqu_2017} and Beran \cite{Beran:2304008}. The theory about long memory time series usually concerns specific examples as fractional Brownian motion and fraction Gaussian noise, which I, for brevity, do not report.
 
 \subsection{Notation}
-To clarify, in this subsection we report some useful notation.
-
 Let be $X(t)$ and $Y(t)$ random variables.
 \begin{align}
 \text{Mean}\quad &\mu_X = \mathbb{E}[X(t)] \\
@@ -42,7 +39,7 @@ Two stochastic processes $\{X(t)\}_{t \in T}$, $\{Y(t)\}_{t \in T}$ have the sam
 \end{equation} 
 
 \subsection{Stationary}
-Behind stationary, there is the idea of a process, whose probabilistic properties do not change with time. This leads to the following definition.
+Heuristically, the idea of stationary is equivalent to that of statistical invariance under time shifts.
 \begin{definition}\label{def:strictstationary} 
 	A stochastic process $\{X (t)\}_{t \in T}$ is \textbf{strictly stationary} if $T = \R$ or $\Z$ or $\R_+$ or $\Z_+$, and for any $h \in T$
 	\begin{equation}
@@ -75,7 +72,6 @@ Notice that in a experimental view, this definition is not usable. In fact, data
 \subsection{Long Range Dependent}
 Long-range dependence, also called long memory or strong dependence or long range correlation, is usually defined for time series. However can be generalized for continuous stationary processes easily \cite{pipiras_taqqu_2017} and for non-stationary ones \cite{Movahed_2006}.
 
-It is useful to introduce this type of function.
 \begin{definition}
 	A function $L$ is \textbf{slowly varying at infinity} if it is positive on $[c, \infty)$ with $c \le 0$ and, for any $a > 0$,
 	\begin{equation}
@@ -88,7 +84,7 @@ functions are such that $L(u) \sim \text{const} > 0$.
 
 As said before, there are several definition of long memory. Only the most interesting and practical one are here reported.
 \begin{definition}
-	A time series $X = \{ X_n \}_{n \in \Z}$ is called long-range dependent if one of the non-equivalent conditions \autoref{cond:1}, \autoref{cond:2}, \autoref{cond:3} holds. The parameter $d \in (0, 1/2)$ is called a long-range dependence parameter.
+	A time series $X = \{ X_n \}_{n \in \Z}$ is called \textbf{long-range dependent} if one of the non-equivalent conditions \autoref{cond:1}, \autoref{cond:2}, \autoref{cond:3} holds. The parameter $d \in (0, 1/2)$ is called a \textnormal{long-range dependence parameter}.
 \end{definition}
 
 \begin{condition}\label{cond:1}
@@ -130,7 +126,7 @@ There is an interesting special type of short-range dependent series, whose auto
 	\end{equation}
 \end{definition}
 
-For an antipersistent time series, $d < 0$.
+For an antipersistent time series, the long-range dependent parameter in \autoref{cond:1} and \autoref{cond:3} is negative, $d < 0$.
 
 \subsection{Self-similarity}
 

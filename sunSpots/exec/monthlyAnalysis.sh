@@ -137,10 +137,9 @@ set arrow from 132,graph(0,0) to 132,graph(1,1) nohead
 set arrow from 450,graph(0,0) to 450,graph(1,1) nohead
 
 plot $QDFAData using 1:2 t 'DFA' pt 0, \
-	tf(x) t '$\alpha$ = ${total[1]}' lw 4, \
- 	s0f(x) t '$\alpha$ = ${s0[1]}' lw 4, \
-	s1f(x) t '$\alpha$ = ${s1[1]}' lw 4, \
-	s2f(x) t '$\alpha$ = ${s2[1]}' lw 4
-
+	tf(x) t '$\alpha$ = $(printf "%.2f" ${total[1]})' lw 4, \
+ 	s0f(x) t '$\alpha$ = $(printf "%.2f" ${s0[1]})' lw 4, \
+	s1f(x) t '$\alpha$ = $(printf "%.2f" ${s1[1]})' lw 4, \
+	s2f(x) t '$\alpha$ = $(printf "%.2f" ${s2[1]})' lw 4
 EOF
 

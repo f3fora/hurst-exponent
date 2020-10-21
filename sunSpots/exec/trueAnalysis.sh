@@ -124,10 +124,14 @@ plot $Qk1 using 1:2 t 'DFA$k1detrend' pt 1,\
     $Qk3 using 1:2 t 'DFA$k3detrend' pt 1,\
     $Qk8 using 1:2 t 'DFA$k8detrend' pt 1,\
     $Qk20 using 1:2 t 'DFA$k20detrend' pt 1, \
-	k1(x) t '$\alpha$ = ${k1[1]:0:4}' lw 4, \
- 	k3(x) t '$\alpha$ = ${k3[1]:0:4}' lw 4, \
-	k8(x) t '$\alpha$ = ${k8[1]:0:4}' lw 4, \
-	k20(x) t '$\alpha$ = ${k20[1]:0:4}' lw 4
+	k1(x) t '$\alpha$ = $(printf "%.2f" ${k1[1]})' lw 4, \
+	k3(x) t '$\alpha$ = $(printf "%.2f" ${k3[1]})' lw 4, \
+	k8(x) t '$\alpha$ = $(printf "%.2f" ${k8[1]})' lw 4, \
+	k20(x) t '$\alpha$ = $(printf "%.2f" ${k20[1]})' lw 4
+
+EOF
+
+gnuplot <<EOF
 
 EOF
 
