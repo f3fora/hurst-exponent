@@ -7,58 +7,60 @@ Sunspots are temporary phenomena on the Sun's photosphere that appear as spots d
 The important feature of the sun’s outer regions is the existence of a reasonably strongmagnetic field. To the lowest order of approximation, the sun’s magnetic field is dipolar in character and is axisymmetric. The strength of the field at a typical point on the solar surface is approximately a few gauss. There is, however significant variation in this value and there are localized regions (called sunspots) in which the field can be much higher.Because of the symmetry of the twisted magnetic lines at the origin of sunspots, they are generally seen in pairs or in groups of pairs on both sides of the solar equator. 
 
 \subsection{Raw data}
-Database given by \cite{sidc}. 
-%some information"
+The SIDC, a department of the Royal Observatory of Belgium, provides, through one of its project, a database of the sunspot number \cite{sidc}. 
 
-\begin{figure}[H]
+
+\begin{figure}[htb]
 	\centering
-	\begin{subfigure}{\textwidth}
+	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/dataPlot.tex}
+		\caption{Daily total sunspot number}\label{fig:dailyss}
 	\end{subfigure}
-
-	\begin{subfigure}{\textwidth}
+	~
+	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/monthly/dataPlot.tex}
+		\caption{Monthly mean total sunspot number}\label{fig:monthlyss}
 	\end{subfigure}
-	\caption{Raw data $x_n$}
+\caption{}
 \end{figure}
 
 \subsection{Data Analysis}
 
-\subsubsection{Profile}
-
-
-\begin{figure}[H]
+\begin{figure}[htb]
 	\centering
 	\begin{subfigure}{\textwidth}
+		\input{../sunSpots/img/true/profilePlot.tex}
+		\caption{}
+	\end{subfigure}
+	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/profilePlot.tex}
+		\caption{daily sunspots \ref{fig:dailyss}}
 	\end{subfigure}
-
-	\begin{subfigure}{\textwidth}
+	~
+	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/monthly/profilePlot.tex}
+		\caption{monthly mean sunspots \ref{fig:monthlyss}}
 	\end{subfigure}
-	\caption{Profile $y_n$}
+	\caption{Profile $Y_n$}
 \end{figure}
 
-\subsubsection{DFA}
-Calculate the DFA for specific $\tau$
-
-\begin{figure}[H]
+\begin{figure}[htb]
 	\centering
 	\begin{subfigure}{\textwidth}
+		\input{../sunSpots/img/true/DFAPlot.tex}
+		\caption{}
+	\end{subfigure}
+
+	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/DFAPlot.tex}
+		\caption{daily sunspots \ref{fig:dailyss}}
 	\end{subfigure}
-	
-	\begin{subfigure}{\textwidth}
+	~
+	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/monthly/DFAPlot.tex}
+		\caption{monthly mean sunspots \ref{fig:monthlyss}}
 	\end{subfigure}
-	\caption{Profile $y_n$}
+	\caption{DFA1(q=2)}
 \end{figure}
-
-\begin{figure}[H]
-	\input{../sunSpots/img/true/DFAPlot.tex}
-\end{figure}
-\subsubsection{Hurst exponent}
-insert table here
-
 
 \subsection{Conclusion}

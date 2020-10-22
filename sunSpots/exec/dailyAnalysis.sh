@@ -42,19 +42,17 @@ xTicLabel=$(awk -v range=$(((numberOfPoints)/9)) 'BEGIN {print "("} !((NR-1)%ran
 QsunSpotPlot="'${sunSpotPlot}'"
 QsunSpotEditData="'${sunSpotEditData}'"
 gnuplot << EOF
-set terminal cairolatex pdf transparent size 16cm, 9cm
+set terminal cairolatex pdf transparent size 8cm, 4.5cm font ',8'
 set output $QsunSpotPlot
+load 'pal1.pal'
 
-set title 'Daily observed sun spots number'
-set xlabel 'Time [year]'
-set ylabel 'Count' 
 set bars small
 stats $QsunSpotEditData using 1 nooutput name 'X_'
 stats $QsunSpotEditData using 2 nooutput name 'Y_'
 
 set xrange [X_min:X_max]
 set yrange [Y_min:Y_max*1.1]
-set xtics $xTicLabel 
+set xtics $xTicLabel rotate by 45 center offset 0,-1
 
 plot $QsunSpotEditData using 1:2:3 notitle with yerrorbar pt 0 
 EOF
@@ -67,17 +65,15 @@ maxGroup=$(( maxGroup < aus ?  maxGroup : aus))
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'${profileName}'"
 gnuplot << EOF
-set terminal cairolatex pdf transparent size 16cm, 9cm
+set terminal cairolatex pdf transparent size 8cm, 4.5cm font ',8'
 set output $QsunProfilePlot
+load 'pal1.pal'
 
-set title 'profile function for sun spots number'
-set xlabel 'Time [year]'
 stats $QprofileData using 1 nooutput name 'X_'
 stats $QprofileData using 2 nooutput name 'Y_'
-set xtics $xTicLabel
+set xtics $xTicLabel rotate by 45 center offset 0,-1
 
-set format y '$ %2.0t \times10^{%L}$'
-
+set format y ' '
 set xrange [X_min:X_max]
 set yrange [Y_min:Y_max*1.1]
 
@@ -108,14 +104,13 @@ s1=($(get_data_for_plot 84 $((194  - 84)) $s1params))
 s2=($(get_data_for_plot 195 $((nGroup - 195)) $s2params))
 
 gnuplot << EOF
-set terminal cairolatex pdf transparent size 16cm, 9cm
+
+set terminal cairolatex pdf transparent size 8cm, 4.5cm font ',8'
 set output $QsunDFAPlot
+load 'pal1.pal'
 
 set logscale xy
-set key right bottom 
-set title 'DFA$detrend analysis for q=$fluctuation'
-set ylabel 'F(s)'
-set xlabel 'time range'
+set key right bottom spacing 1.5
 stats $QDFAData using 1 nooutput name 'X_'
 stats $QDFAData using 2 nooutput name 'Y_'
 set format x '$ 10^{%L}$'
@@ -123,7 +118,6 @@ set format y '$ 10^{%L}$'
 
 set xrange [X_min:X_max]
 set yrange [Y_min:Y_max*1.1]
-set xtics ("4 months" 120, "1 years" 365, "4 years" 1460, "16 years" 5840, "48 years" 17520)
 
 tf(x) = (${total[4]} <= x && x <= ${total[3]}) ? ${total[0]} * ( x ** ${total[1]}) : 1/0
 s0f(x) = (${s0[4]} <= x && x<= ${s0[3]}) ? ${s0[0]} * ( x ** ${s0[1]}) : 1/0
@@ -135,11 +129,11 @@ set arrow from 510,graph(0,0) to 510,graph(1,1) nohead
 set arrow from 3960,graph(0,0) to 3960,graph(1,1) nohead
 set arrow from 13500,graph(0,0) to 13500,graph(1,1) nohead
 
-plot $QDFAData using 1:2 t 'DFA' pt 0, \
-	tf(x) t '$\alpha$ = $(printf "%.2f" ${total[1]})' lw 4, \
- 	s0f(x) t '$\alpha$ = $(printf "%.2f" ${s0[1]})'lw 4, \
-	s1f(x) t '$\alpha$ = $(printf "%.2f" ${s1[1]})' lw 4, \
-	s2f(x) t '$\alpha$ = $(printf "%.2f" ${s2[1]})' lw 4
+plot $QDFAData using 1:2 notitle pt 6 lc 11, \
+	tf(x) t '$(printf "%.2f" ${total[1]})' lw 4, \
+ 	s0f(x) t '$(printf "%.2f" ${s0[1]})'lw 4, \
+	s1f(x) t '$(printf "%.2f" ${s1[1]})' lw 4, \
+	s2f(x) t '$(printf "%.2f" ${s2[1]})' lw 4
 
 EOF
 

@@ -1,0 +1,12 @@
+set linetype 11 lc rgb '#d3d3d3'
+set linetype 1 lc rgb '#54478c'
+set linetype 2 lc rgb '#2c699a'
+set linetype 3 lc rgb '#048ba8'
+set linetype 4 lc rgb '#0db39e'
+set linetype 5 lc rgb '#16db93'
+set linetype 6 lc rgb '#83e377'
+set linetype 7 lc rgb '#b9e769'
+set linetype 8 lc rgb '#efea5a'
+set linetype 9 lc rgb '#f1c453'
+set linetype 10 lc rgb '#f29e4c'
+set linetype cycle 11
