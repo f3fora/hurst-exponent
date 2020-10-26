@@ -5,13 +5,17 @@ DFANAME = exec/DFA
 DFADEPS = src/detrendFluctuationAnalysis.c
 HENAME = exec/HE
 HEDEPS = src/HurstExponent.c
+FONAME = exec/FO
+FODEPS = src/fourierDFA.c
 DSSNAME = sunSpots/exec/dailyAnalysis.sh
 MSSNAME = sunSpots/exec/monthlyAnalysis.sh
 TSSNAME = sunSpots/exec/trueAnalysis.sh
+FSSNAME = sunSpots/exec/fourierAnalysis.sh
 
 all: $(DEPS)
 	$(CC) $(CFLAGS) -o $(DFANAME) $(DFADEPS)
 	$(CC) $(CFLAGS) -o $(HENAME) $(HEDEPS)
+	$(CC) $(CFLAGS) -o $(FONAME) $(FODEPS)
 
 .PHONY: dailySunSpots
 
@@ -28,8 +32,14 @@ monthlySunSpots:
 trueSunSpots:
 	bash $(TSSNAME)
 
+.PHONY: fourierSunSpots
+
+fourierSunSpots:
+	bash $(FSSNAME)
+
 .PHONY: clean
 
 clean: 
 	$(RM) $(DFANAME)
 	$(RM) $(HENAME)
+	$(RM) $(FONAME)

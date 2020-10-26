@@ -120,7 +120,6 @@ set output $QsunDFAPlot
 
 set logscale xy
 set key inside bottom right horizontal maxcols 4 
-set title 'Comparison of DFAk analysis for q=$fluctuation'
 set ylabel '$ F^{k}_$fluctuation (\tau) $'
 set xlabel '$\tau$ [months]'
 set format x '$ 10^{%L}$'
@@ -185,7 +184,6 @@ load 'pal1.pal'
 
 set key inside bottom center horizontal
 
-set title 'profile function for sun spots number'
 set ylabel '$ Y_n$' offset -1,0
 set xlabel 't [year]'
 stats $QprofileData using 1 nooutput name 'X_'

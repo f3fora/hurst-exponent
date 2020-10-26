@@ -47,9 +47,9 @@ width=0.8\textwidth,
 \usepackage[list=true]{subcaption}
 
 \renewcommand{\thefigure}{\arabic{figure}}
-\renewcommand{\thesubfigure}{\roman{subfigure}}
+%\renewcommand{\thesubfigure}{\roman{subfigure}}
 \renewcommand{\thetable}{\arabic{table}}
-\renewcommand{\thesubtable}{\roman{subtable}}
+%\renewcommand{\thesubtable}{\roman{subtable}}
 
 \numberwithin{equation}{subsection}
 
@@ -69,7 +69,14 @@ width=0.8\textwidth,
 \newcommand{\deq}{\overset{d}{=}}
 
 \newtheorem{theorem}{Theorem}[section]
+
+\theoremstyle{definition}
 \newtheorem{definition}{Definition}[section]
 \newcommand{\definitionautorefname}{Definition}
+
+\newtheorem{step}{Step}
+\newcommand{\stepautorefname}{Step}
+
+\theoremstyle{remark}
 \newtheorem{condition}{Condition}[definition]
 \newcommand{\conditionautorefname}{Condition}

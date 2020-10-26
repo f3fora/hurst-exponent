@@ -1,16 +1,11 @@
-\section{Example: sun spots}
 \graphicspath{{../sunSpots/img/}}
-%copy paste wiki
-Sunspots are temporary phenomena on the Sun's photosphere that appear as spots darker than the surrounding areas. They are regions of reduced surface temperature caused by concentrations of magnetic field flux that inhibit convection. Sunspots usually appear in pairs of opposite magnetic polarity.
-
-%sunspot paper
-The important feature of the sun’s outer regions is the existence of a reasonably strongmagnetic field. To the lowest order of approximation, the sun’s magnetic field is dipolar in character and is axisymmetric. The strength of the field at a typical point on the solar surface is approximately a few gauss. There is, however significant variation in this value and there are localized regions (called sunspots) in which the field can be much higher.Because of the symmetry of the twisted magnetic lines at the origin of sunspots, they are generally seen in pairs or in groups of pairs on both sides of the solar equator. 
+\section{Sunspots}
+On the Sun's photosphere there is a strong magnetic field. However in some localized regions (called \textbf{sunspots}), the field is significant higher and the surface appear as spots darker than the surrounding areas.
 
 \subsection{Raw data}
-The SIDC, a department of the Royal Observatory of Belgium, provides, through one of its project, a database of the sunspot number \cite{sidc}. 
-
-
-\begin{figure}[htb]
+The SIDC, a department of the Royal Observatory of Belgium, provides, through one of its project, two databases of the sunspot number \cite{sidc}. \\
+The first one provides daily measures from 01-01-1818 and the other one the monthly means from 01-01-1749. The relative plots can be found in \autoref{fig:ss}.
+\begin{figure}[!h]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/dataPlot.tex}
@@ -21,46 +16,91 @@ The SIDC, a department of the Royal Observatory of Belgium, provides, through on
 		\input{../sunSpots/img/monthly/dataPlot.tex}
 		\caption{Monthly mean total sunspot number}\label{fig:monthlyss}
 	\end{subfigure}
-\caption{}
+\caption{Time series $\{X_n\}$ of sunspot number, sampled at different frequency}\label{fig:ss}
 \end{figure}
 
 \subsection{Data Analysis}
+DFAk, illustrated in \autoref{sec:dfa}, is applied to the sunspot databases. 
 
-\begin{figure}[htb]
+\subsubsection{Profile plot}
+\autoref{fig:dailyprofile} and \autoref{fig:monthlyprofile} shows the profile $\{Y_n\}$ defined in \autoref{step1}. 
+
+The profile is split in equal time windows $\tau$, as illustrated in \autoref{step2} and each division is fitted with a polynomial of $k$th order, as in \autoref{step3}.\\ 
+As an example, in \autoref{fig:profilemain}, different time windows with their relative fit are plotted.
+\begin{figure}[!h]
 	\centering
 	\begin{subfigure}{\textwidth}
 		\input{../sunSpots/img/true/profilePlot.tex}
-		\caption{}
+		\caption{Monthly mean sunspots \ref{fig:monthlyss} and example of fits. \\ 
+		Coloured lines represent polynomial fits of 7-th order at different time scales, indicated in the legend and with months as unit.}\label{fig:profilemain}
 	\end{subfigure}
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/profilePlot.tex}
-		\caption{daily sunspots \ref{fig:dailyss}}
+		\caption{Daily sunspots \ref{fig:dailyss}}\label{fig:dailyprofile}
 	\end{subfigure}
 	~
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/monthly/profilePlot.tex}
-		\caption{monthly mean sunspots \ref{fig:monthlyss}}
+		\caption{Monthly mean sunspots \ref{fig:monthlyss}}\label{fig:monthlyprofile}
 	\end{subfigure}
-	\caption{Profile $Y_n$}
+	\caption{The profile $\{Y_n\}$, defined as \autoref{step1} and relative to data in \autoref{fig:ss}}\label{fig:profile}
 \end{figure}
 
-\begin{figure}[htb]
+\subsubsection{Log-log plot}
+As describe in \autoref{step4}, the total variance $F_2^{( k )}(\tau)$ is estimated for equally spaced $\log(\tau)$.
+
+Firstly, neglecting the section with few points, DFA1 gives same results at the same $\tau$, independently from the frequency of sampling, as in \autoref{fig:dailyDFA1} and \autoref{fig:monthlyDFA1}.
+
+Secondly, the plots shows that the the time series have different slopes, at different time scale. Ideally, however, if a process is self-affinal, the log-log plot of $F_2^{( k )}(\tau)$ should be a straight line. This could mean that the process has different behaviour at different time scale, or that the order of detrend $k$ is too low.
+
+As it is illustrated in \autoref{fig:profilemain}, the order $k=7$ can't fit properly a time window $\tau > \SI{280}{months}$. Analogously, lower $k$ capability of fitting is limited. 
+
+OLS can't fit the sunspots $Y_n$ with a polynomial of order 8 or bigger, because of the overflow of double in C program.
+
+A comparison of DFA$k$ with different $k$ is plotted in \autoref{fig:DFAk}. 
+The behaviour of the time series is the same in windows well detrended (dashed line).\\ 
+The series in DFA7 shows two behaviour, and so is multi-fractal:
+\begin{itemize}
+	\item for $\tau \le \SI{132}{months}$, $\alpha(q) \in (0.5, 1)$ and so the process is a stationary long-range memory one.
+	\item for $\SI{132}{months} < \tau \le \SI{280}{months}$, $\alpha(q) \in (2, 2.5)$ 
+	\item for $\tau > \SI{280}{months}$, the series is not correct detrended.
+\end{itemize}
+
+In \autoref{sec:hdfa} nothing is said about process with $\alpha(q)>2$, and I have no idea on how to give an interpretation to this result. 
+
+\begin{figure}[!h]
 	\centering
 	\begin{subfigure}{\textwidth}
 		\input{../sunSpots/img/true/DFAPlot.tex}
-		\caption{}
+		\caption{Monthly mean sunspots \ref{fig:monthlyss} DFAk}\label{fig:DFAk}
 	\end{subfigure}
 
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/DFAPlot.tex}
-		\caption{daily sunspots \ref{fig:dailyss}}
+		\caption{Daily sunspot \ref{fig:dailyss} DFA1}\label{fig:dailyDFA1}
 	\end{subfigure}
 	~
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/monthly/DFAPlot.tex}
-		\caption{monthly mean sunspots \ref{fig:monthlyss}}
+		\caption{Monthly mean sunspots \ref{fig:monthlyss} DFA1}\label{fig:monthlyDFA1}
 	\end{subfigure}
-	\caption{DFA1(q=2)}
+	\caption{Detrended fluctuation analysis\\
+	The estimation of the $\alpha(2)$ parameter is reported in the legend of graphs.\\
+	In \autoref{fig:dailyDFA1} the unit of $\tau$ is [days] and in \autoref{fig:monthlyDFA1} is [months]. The vertical black lines are placed at same $\tau = 4,17, 132, 450 \text{ months}$.}\label{fig:DFA}
 \end{figure}
 
-\subsection{Conclusion}
+%\begin{figure}[!h]
+%	\centering
+%	\begin{subfigure}{\textwidth}
+%		\input{../sunSpots/img/fourier/dataPlot.tex}
+%	\end{subfigure}
+%	
+%	\begin{subfigure}{0.48\textwidth}
+%		\input{../sunSpots/img/fourier/profilePlot.tex}
+%	\end{subfigure}
+%	~
+%	\begin{subfigure}{0.48\textwidth}
+%		\input{../sunSpots/img/fourier/DFAPlot.tex}
+%	\end{subfigure}
+%	\caption{}
+%\end{figure}
