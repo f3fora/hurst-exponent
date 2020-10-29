@@ -22,7 +22,7 @@ sunProfilePlot="${imgPath}profilePlot.tex"
 sunDFAPlot="${imgPath}DFAPlot.tex"
 
 k1Path="../data/processed/k1/"
-k1profileName="${k1Path}profile.dat"
+profileName="${k1Path}profile.dat"
 k1sunSpotEditData="${k1Path}editedSN.dat"
 k1DFAData="${k1Path}DFA.dat"
 k1params="${k1Path}params.dat"
@@ -30,7 +30,6 @@ dk1params="${k1Path}dparams.dat"
 k1detrend=1
 
 k3Path="../data/processed/k3/"
-k3profileName="${k3Path}profile.dat"
 k3sunSpotEditData="${k3Path}editedSN.dat"
 k3DFAData="${k3Path}DFA.dat"
 k3params="${k3Path}params.dat"
@@ -38,7 +37,6 @@ dk3params="${k3Path}dparams.dat"
 k3detrend=2
 
 k8Path="../data/processed/k8/"
-k8profileName="${k8Path}profile.dat"
 k8sunSpotEditData="${k8Path}editedSN.dat"
 k8DFAData="${k8Path}DFA.dat"
 k8params="${k8Path}params.dat"
@@ -46,7 +44,6 @@ dk8params="${k8Path}pdarams.dat"
 k8detrend=4
 
 k20Path="../data/processed/k20/"
-k20profileName="${k20Path}profile.dat"
 k20sunSpotEditData="${k20Path}editedSN.dat"
 k20DFAData="${k20Path}DFA.dat"
 k20params="${k20Path}params.dat"
@@ -66,10 +63,15 @@ k3max=$((numberOfPoints/(k3detrend+3)))
 k8max=$((numberOfPoints/(k8detrend+3)))
 k20max=$((numberOfPoints/(k20detrend+3)))
 
-# ./../../exec/DFA $numberOfPoints $numberOfColumns $k1detrend $fluctuation $minGroup $k1max $nGroup $numberOfWindows $sunSpotEditData $k1Path
-# ./../../exec/DFA $numberOfPoints $numberOfColumns $k3detrend $fluctuation $minGroup $k3max $nGroup $numberOfWindows $sunSpotEditData $k3Path
-# ./../../exec/DFA $numberOfPoints $numberOfColumns $k8detrend $fluctuation $minGroup $k8max $nGroup $numberOfWindows $sunSpotEditData $k8Path
-# ./../../exec/DFA $numberOfPoints $numberOfColumns $k20detrend $fluctuation $minGroup $k20max $nGroup $numberOfWindows $sunSpotEditData $k20Path
+
+./../../exec/PR $numberOfPoints $numberOfColumns $sunSpotEditData $k1Path
+./../../exec/DFA $numberOfPoints 2 $k1detrend $fluctuation $minGroup $k1max $nGroup $numberOfWindows $profileName $k1Path
+
+./../../exec/DFA $numberOfPoints 2 $k3detrend $fluctuation $minGroup $k3max $nGroup $numberOfWindows $profileName $k3Path
+
+./../../exec/DFA $numberOfPoints 2 $k8detrend $fluctuation $minGroup $k8max $nGroup $numberOfWindows $profileName $k8Path
+
+./../../exec/DFA $numberOfPoints 2 $k20detrend $fluctuation $minGroup $k20max $nGroup $numberOfWindows $profileName $k20Path
 
 QsunDFAPlot="'${sunDFAPlot}'"
 Qk1="'$k1DFAData'"
@@ -170,7 +172,7 @@ plot $Qk1 using 1:2 t 'DFA$k1detrend' pt 6 lc 1,\
 EOF
 
 QsunProfilePlot="'${sunProfilePlot}'"
-QprofileData="'${k1profileName}'"
+QprofileData="'${profileName}'"
 
 xTicLabel=$(awk -v range=$(((numberOfPoints)/9)) 'BEGIN {print "("} !((NR-1)%range) {print "\""$4"\" " $1 ", "} END {print  ")"}' $sunSpotEditData | tr -d '\n' ) 
 

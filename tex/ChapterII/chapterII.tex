@@ -2,7 +2,7 @@
 
 The purpose of DFA is to estimate the variance of the partials sum of the series $X = \{ X_n \}_{n \in \Z}$. In this way, the \autoref{cond:3} allows to estimate the long-range dependence parameter. 
 
-The Multifractal Detrended Fluctuation Analysis (MF-DFA) is a generalization of the standard DFA, which use only the second moment $q = 2$. 
+The Multifractal Detrended Fluctuation Analysis (MF-DFA) is a generalization of the standard DFA to all moment $q$. 
 
 \subsection{Multifractal Detrended Fluctuation Analysis}
 The procedure is described for a continuous stochastic process $\{X(t)\}_{t\in [0, T]}$ and then applied to a time series $\{ X_n \}_{n = 1, \dots, N} $ sampled at time $t_n$, underlining some tips and tricks. 
@@ -108,8 +108,8 @@ Let be $\N \ni l_n(\tau) = l(\tau) + \varepsilon_n$, where $\tau = \left< \Delta
 For big $\tau$, $\varepsilon_n$ is negligible, and so $l_n(\tau) \approx l(\tau)$. For small $\tau$, instead, $\varepsilon_n$ can be important, but there are $N_{\tau} \propto \tau^{-1}$ windows, and so the average $\left< l_n(\tau) \right>_{n = 1, \dots N_{\tau}} = l(\tau)$.
 \end{step}
 
-\subsection{Hurst exponent and DFAk}\label{sec:hdfa}
-The $\alpha(q)$ parameter can be interpreter in term of Hurst exponent $H$. There's a linear relationship between $\alpha(q=2)$ and $H$. As said before, the DFAk is equivalent to MF-DFAk(q=2).
+\subsection{Hurst exponent and DFA$k$}\label{sec:hdfa}
+The $\alpha(q)$ parameter can be interpreter in term of Hurst exponent $H$. There's a linear relationship between $\alpha(q=2)$ and $H$. As said before, the DFA$k$ is equivalent to MF-DFA$k$($q=2$).
 
 If $X_n$ is a stationary time series (e.g fractional Gaussian noise), $Y_n$ will be a self-similarity process, and so $0 < \alpha(q = 2) < 1$. For \autoref{cond:3}, the exponent $\alpha(2)$ is identical to the Hurst exponent $H$.
 

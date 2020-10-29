@@ -7,6 +7,8 @@ HENAME = exec/HE
 HEDEPS = src/HurstExponent.c
 FONAME = exec/FO
 FODEPS = src/fourierDFA.c
+PRNAME = exec/PR
+PRDEPS = src/profile.c
 DSSNAME = sunSpots/exec/dailyAnalysis.sh
 MSSNAME = sunSpots/exec/monthlyAnalysis.sh
 TSSNAME = sunSpots/exec/trueAnalysis.sh
@@ -16,6 +18,7 @@ all: $(DEPS)
 	$(CC) $(CFLAGS) -o $(DFANAME) $(DFADEPS)
 	$(CC) $(CFLAGS) -o $(HENAME) $(HEDEPS)
 	$(CC) $(CFLAGS) -o $(FONAME) $(FODEPS)
+	$(CC) $(CFLAGS) -o $(PRNAME) $(PRDEPS)
 
 .PHONY: dailySunSpots
 
@@ -43,3 +46,4 @@ clean:
 	$(RM) $(DFANAME)
 	$(RM) $(HENAME)
 	$(RM) $(FONAME)
+	$(RM) $(PRNAME)

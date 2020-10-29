@@ -38,28 +38,6 @@ int print_matrix(FILE *f, const gsl_matrix *m)
         return n;
 }
 
-
-gsl_vector *determinateProfile(gsl_matrix *data, size_t toProfileColumn)
-{
-	/*
-	 * determinate the profile (step1)
-	 */
-	gsl_vector *profiledData = gsl_vector_alloc( data->size1 );
-	gsl_vector_view column = gsl_matrix_column(data, toProfileColumn);
-	double mean = gsl_stats_mean(column.vector.data, column.vector.stride, column.vector.size);
-
-        size_t i;
-        double sum = 0;
-        for ( i=0; i<column.vector.size; i++ )
-        {
-                sum += ( gsl_vector_get(&column.vector, i) - mean );
-                gsl_vector_set (profiledData, i, sum);
-        }
-
-        return profiledData;
-}
-
-
 double getVarianceOfSegment(gsl_vector *partialProfile, gsl_matrix *partialTime)
 {
 	/*
@@ -284,25 +262,11 @@ int main ( int argc, char *argv[] )
 	fclose( file );
 	
 	// Determinate profile of the time series
-	gsl_vector *profile = determinateProfile(inputData, X_COLUMN) ;
+	gsl_vector *profile = gsl_vector_alloc( inputData->size1);
 	gsl_vector *time = gsl_vector_alloc( inputData->size1);
+	gsl_matrix_get_col(profile, inputData, X_COLUMN);
 	gsl_matrix_get_col(time, inputData, TIME_COLUMN);
 	gsl_matrix_free( inputData );
-
-	char *profileFileName = malloc(strlen(outputPath) + strlen(PROFILE_NAME) + 1);
-	strcpy(profileFileName, outputPath);
-	strcat(profileFileName, PROFILE_NAME);
-
-	// Export profile data
-	if ( ( file = fopen( profileFileName, "w" ) ) == 0 ) return 1;
-	gsl_matrix *profileMatrix = gsl_matrix_alloc(time->size, 2);
-	gsl_matrix_set_col(profileMatrix, 0, time);
-	gsl_matrix_set_col(profileMatrix, 1, profile);
-	print_matrix(file, profileMatrix);
-	fclose( file );
-	gsl_matrix_free( profileMatrix );
-
-	free(profileFileName);
 
 	// Calculate DFA
 	gsl_matrix *DFAMatrix = getDFASpace(time, profile, detrend, fluctuation, minSeg, maxSeg, nSeg, windows);

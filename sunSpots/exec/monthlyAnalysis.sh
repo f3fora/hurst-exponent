@@ -60,7 +60,8 @@ EOF
 aus=$((numberOfPoints/(detrend+3)))
 maxGroup=$(( maxGroup < aus ?  maxGroup : aus))
 
-./../../exec/DFA $numberOfPoints $numberOfColumns $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $sunSpotEditData $outputPath
+./../../exec/PR $numberOfPoints $numberOfColumns $sunSpotEditData $outputPath
+./../../exec/DFA $numberOfPoints 2 $detrend $fluctuation $minGroup $maxGroup $nGroup $numberOfWindows $profileName $outputPath
 
 QsunProfilePlot="'${sunProfilePlot}'"
 QprofileData="'${profileName}'"

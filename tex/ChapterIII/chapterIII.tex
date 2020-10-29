@@ -20,9 +20,9 @@ The first one provides daily measures from 01-01-1818 and the other one the mont
 \end{figure}
 
 \subsection{Data Analysis}
-DFAk, illustrated in \autoref{sec:dfa}, is applied to the sunspot databases. 
+DFA$k$, illustrated in \autoref{sec:dfa}, is applied to the sunspot databases. 
 
-\subsubsection{Profile plot}
+\subsubsection*{Profile plot}
 \autoref{fig:dailyprofile} and \autoref{fig:monthlyprofile} shows the profile $\{Y_n\}$ defined in \autoref{step1}. 
 
 The profile is split in equal time windows $\tau$, as illustrated in \autoref{step2} and each division is fitted with a polynomial of $k$th order, as in \autoref{step3}.\\ 
@@ -32,7 +32,7 @@ As an example, in \autoref{fig:profilemain}, different time windows with their r
 	\begin{subfigure}{\textwidth}
 		\input{../sunSpots/img/true/profilePlot.tex}
 		\caption{Monthly mean sunspots \ref{fig:monthlyss} and example of fits. \\ 
-		Coloured lines represent polynomial fits of 7-th order at different time scales, indicated in the legend and with months as unit.}\label{fig:profilemain}
+		Coloured lines represent polynomial fits of 7-th order at different time intervals, indicated in the legend and with months as unit.}\label{fig:profilemain}
 	\end{subfigure}
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/daily/profilePlot.tex}
@@ -46,7 +46,7 @@ As an example, in \autoref{fig:profilemain}, different time windows with their r
 	\caption{The profile $\{Y_n\}$, defined as \autoref{step1} and relative to data in \autoref{fig:ss}}\label{fig:profile}
 \end{figure}
 
-\subsubsection{Log-log plot}
+\subsubsection*{Log-log plot}
 As describe in \autoref{step4}, the total variance $F_2^{( k )}(\tau)$ is estimated for equally spaced $\log(\tau)$.
 
 Firstly, neglecting the section with few points, DFA1 gives same results at the same $\tau$, independently from the frequency of sampling, as in \autoref{fig:dailyDFA1} and \autoref{fig:monthlyDFA1}.
@@ -74,7 +74,7 @@ Comparing with the same work done by Movahed et al. \cite{Movahed_2006}, the DFA
 	\centering
 	\begin{subfigure}{\textwidth}
 		\input{../sunSpots/img/true/DFAPlot.tex}
-		\caption{Monthly mean sunspots \ref{fig:monthlyss} DFAk}\label{fig:DFAk}
+		\caption{Monthly mean sunspots \ref{fig:monthlyss} DFA$k$\\ Vertical lines indicates the interval used as example in \autoref{fig:profilemain}}\label{fig:DFAk}
 	\end{subfigure}
 
 	\begin{subfigure}{0.48\textwidth}
@@ -91,23 +91,31 @@ Comparing with the same work done by Movahed et al. \cite{Movahed_2006}, the DFA
 	In \autoref{fig:dailyDFA1} the unit of $\tau$ is [days] and in \autoref{fig:monthlyDFA1} is [months]. The vertical black lines are placed at same $\tau = 4,17, 132, 450 \text{ months}$.}\label{fig:DFA}
 \end{figure}
 
-To remove the sinusoidal trend, Movahed et al. applied a Fourier-DFA. It consist in Fourier transform the time series, set to zero the first 50 terms, anti-transform, and then applying the DFA1. However I got inconsistent results comparing to them. Moreover, the profile keep showing a trend, that can't be remove with a DFA1.
+\subsubsection*{Fourier-DFA}
+To remove the sinusoidal trend, Movahed et al. applied a F50-DFA1. It consist in Fourier transform the profile $\{ Y_n \}$, set to zero the first 50 terms, anti-transform, and then applying the DFA. However I got inconsistent results comparing to them.
+
+In general, F$n$-DFA$k$ indicates the DFA$k$, where the first $n$ terms of real Fourier transform are set to 0.  
+
+In \autoref{fig:f50} and \autoref{fig:f100} the first 50 and 100 terms are removed from the profile. However, the graph of \autoref{fig:f50} still contains a trend. This is also evident because F50-DFA1 and DFA1 (\autoref{fig:monthlyDFA1}) for sufficient small $\tau$ gives the same $\alpha(2)$.\\
+For small $\tau$, F100-DFA works, because the estimation of time series behaviour is compatible with DFA$k$ with $k>1$.
+
+However, F-DFA do not provides information for big $\tau$, because the lowest frequencies are removed and so the variation for long period become constant. 
 
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
-		\input{../sunSpots/img/fourier/dataPlot.tex}
-		\caption{Time series $X$}
+		\input{../sunSpots/img/fourier/f1profilePlot.tex}
+		\caption{Profile $\{Y_n\}$ without the first $50$ terms of Fourier transform}\label{fig:f50}
 	\end{subfigure}
 	~
 	\begin{subfigure}{0.48\textwidth}
-		\input{../sunSpots/img/fourier/profilePlot.tex}
-		\caption{Profile $Y$}
+		\input{../sunSpots/img/fourier/f2profilePlot.tex}
+		\caption{Profile $\{Y_n\}$ without the first $100$ terms of Fourier transform}\label{fig:f100}
 	\end{subfigure}
-	~
-	\begin{subfigure}{0.48\textwidth}
+	
+	\begin{subfigure}{\textwidth}
 		\input{../sunSpots/img/fourier/DFAPlot.tex}
-		\caption{DFA1 analysis}
+		\caption{F$n$-DFA1\\}
 	\end{subfigure}
-	\caption{Applying the Fourier-DFA methods}
+	\caption{Applying the Fourier-DFA methods to the monthly mean sunspots \ref{fig:monthlyss}}\label{fig:fdfa}
 \end{figure}
