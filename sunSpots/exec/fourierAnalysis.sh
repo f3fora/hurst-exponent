@@ -7,8 +7,9 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR
 
-detrend=7 # hurst exponent <=> detrend=1
+detrend=1 # hurst exponent <=> detrend=1
 fluctuation=2 # hurst exponent <=> flutctuation=2
+fourierDetrend=50
 minGroup=4 # should be >=4
 maxGroup=900 # shouldn't be too high 
 nGroup=300
@@ -39,7 +40,7 @@ numberOfPoints=$(wc -l < $sunSpotEditData)
 xTicLabel=$(awk -v range=$(((numberOfPoints)/9)) 'BEGIN {print "("} !((NR-1)%range) {print "\""$4"\" " $1 ", "} END {print  ")"}' $sunSpotEditData | tr -d '\n' ) 
 
 # fourier remove trend
-./../../exec/FO $numberOfPoints $numberOfColumns 100 $sunSpotEditData $sunSpotEditData
+./../../exec/FO $numberOfPoints $numberOfColumns $fourierDetrend $sunSpotEditData $sunSpotEditData
 
 # Plot the data
 QsunSpotPlot="'${sunSpotPlot}'"
@@ -102,10 +103,8 @@ get_data_for_plot ()
 }
 
 #total=($(get_data_for_plot 0 $nGroup $params))
-total=($(get_data_for_plot 0 33 $params))
-s0=($(get_data_for_plot 34 $((102 - 34)) $s0params))
-s1=($(get_data_for_plot 103 $((218 - 103)) $s1params))
-s2=($(get_data_for_plot 218 $((nGroup - 218)) $s2params))
+s0=($(get_data_for_plot 100 $((nGroup- 100)) $s0params))
+s1=($(get_data_for_plot 0 100  $s1params))
 
 gnuplot << EOF
 set terminal cairolatex pdf transparent size 8cm, 4.5cm font ',8'
@@ -122,10 +121,8 @@ set format y '$ 10^{%L}$'
 set xrange [X_min:X_max]
 set yrange [Y_min:Y_max*1.1]
 
-tf(x) = (${total[4]} <= x && x <= ${total[3]}) ? ${total[0]} * ( x ** ${total[1]}) : 1/0
 s0f(x) = (${s0[4]} <= x && x<= ${s0[3]}) ? ${s0[0]} * ( x ** ${s0[1]}) : 1/0
 s1f(x) = (${s1[4]}  <= x && x <= ${s1[3]}) ? ${s1[0]} * ( x ** ${s1[1]}) : 1/0
-s2f(x) = (${s2[4]} <= x && x <= ${s2[3]}) ? ${s2[0]} * ( x ** ${s2[1]}) : 1/0
 
 set arrow from 4,graph(0,0) to 4,graph(1,1) nohead
 set arrow from 17,graph(0,0) to 17,graph(1,1) nohead
@@ -133,9 +130,7 @@ set arrow from 132,graph(0,0) to 132,graph(1,1) nohead
 set arrow from 450,graph(0,0) to 450,graph(1,1) nohead
 
 plot $QDFAData using 1:2 notitle pt 6 lc 11, \
-	tf(x) t '$(printf "%.2f" ${total[1]})' lw 4, \
  	s0f(x) t '$(printf "%.2f" ${s0[1]})' lw 4, \
-	s1f(x) t '$(printf "%.2f" ${s1[1]})' lw 4, \
-	s2f(x) t '$(printf "%.2f" ${s2[1]})' lw 4
+	s1f(x) t '$(printf "%.2f" ${s1[1]})' lw 4
 EOF
 

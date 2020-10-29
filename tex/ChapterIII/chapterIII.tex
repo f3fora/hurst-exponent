@@ -68,6 +68,8 @@ The series in DFA7 shows two behaviour, and so is multi-fractal:
 
 In \autoref{sec:hdfa} nothing is said about process with $\alpha(q)>2$, and I have no idea on how to give an interpretation to this result. 
 
+Comparing with the same work done by Movahed et al. \cite{Movahed_2006}, the DFA1 applied on all dataset gives the same result. However their estimation on $F_2^{( k )}(\tau)$ is much more unstable, and so the residuals have a more casual distribution.
+
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}{\textwidth}
@@ -89,18 +91,23 @@ In \autoref{sec:hdfa} nothing is said about process with $\alpha(q)>2$, and I ha
 	In \autoref{fig:dailyDFA1} the unit of $\tau$ is [days] and in \autoref{fig:monthlyDFA1} is [months]. The vertical black lines are placed at same $\tau = 4,17, 132, 450 \text{ months}$.}\label{fig:DFA}
 \end{figure}
 
-%\begin{figure}[!h]
-%	\centering
-%	\begin{subfigure}{\textwidth}
-%		\input{../sunSpots/img/fourier/dataPlot.tex}
-%	\end{subfigure}
-%	
-%	\begin{subfigure}{0.48\textwidth}
-%		\input{../sunSpots/img/fourier/profilePlot.tex}
-%	\end{subfigure}
-%	~
-%	\begin{subfigure}{0.48\textwidth}
-%		\input{../sunSpots/img/fourier/DFAPlot.tex}
-%	\end{subfigure}
-%	\caption{}
-%\end{figure}
+To remove the sinusoidal trend, Movahed et al. applied a Fourier-DFA. It consist in Fourier transform the time series, set to zero the first 50 terms, anti-transform, and then applying the DFA1. However I got inconsistent results comparing to them. Moreover, the profile keep showing a trend, that can't be remove with a DFA1.
+
+\begin{figure}[!h]
+	\centering
+	\begin{subfigure}{0.48\textwidth}
+		\input{../sunSpots/img/fourier/dataPlot.tex}
+		\caption{Time series $X$}
+	\end{subfigure}
+	~
+	\begin{subfigure}{0.48\textwidth}
+		\input{../sunSpots/img/fourier/profilePlot.tex}
+		\caption{Profile $Y$}
+	\end{subfigure}
+	~
+	\begin{subfigure}{0.48\textwidth}
+		\input{../sunSpots/img/fourier/DFAPlot.tex}
+		\caption{DFA1 analysis}
+	\end{subfigure}
+	\caption{Applying the Fourier-DFA methods}
+\end{figure}
