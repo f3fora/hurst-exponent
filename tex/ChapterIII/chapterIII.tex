@@ -5,14 +5,17 @@ On the Sun's photosphere there is a strong magnetic field. However in some local
 \subsection{Raw data}
 The SIDC, a department of the Royal Observatory of Belgium, provides, through one of its project, two databases of the sunspot number \cite{sidc}. \\
 The first one provides daily measures from 01-01-1818 and the other one the monthly means from 01-01-1749. The relative plots can be found in \autoref{fig:ss}.
+
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/daily/dataPlot.tex}
 		\caption{Daily total sunspot number}\label{fig:dailyss}
 	\end{subfigure}
-	~
+	\hfill
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/monthly/dataPlot.tex}
 		\caption{Monthly mean total sunspot number}\label{fig:monthlyss}
 	\end{subfigure}
@@ -22,23 +25,26 @@ The first one provides daily measures from 01-01-1818 and the other one the mont
 \subsection{Data Analysis}
 DFA$k$, illustrated in \autoref{sec:dfa}, is applied to the sunspot databases. 
 
-\subsubsection*{Profile plot}
-\autoref{fig:dailyprofile} and \autoref{fig:monthlyprofile} shows the profile $\{Y_n\}$ defined in \autoref{step1}. 
-
+\paragraph{Profile of sunspot number}
+\autoref{fig:dailyprofile} and \autoref{fig:monthlyprofile} shows the profile $\{Y_n\}$ defined in \autoref{step1}. \\
 The profile is split in equal time windows $\tau$, as illustrated in \autoref{step2} and each division is fitted with a polynomial of $k$th order, as in \autoref{step3}.\\ 
 As an example, in \autoref{fig:profilemain}, different time windows with their relative fit are plotted.
+
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}{\textwidth}
+		\centering
 		\input{../sunSpots/img/true/profilePlot.tex}
 		\caption{Monthly mean sunspots \ref{fig:monthlyss} and example of fits. \\ 
 		Coloured lines represent polynomial fits of 7-th order at different time intervals, indicated in the legend and with months as unit.}\label{fig:profilemain}
 	\end{subfigure}
+	\vfill
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/daily/profilePlot.tex}
 		\caption{Daily sunspots \ref{fig:dailyss}}\label{fig:dailyprofile}
 	\end{subfigure}
-	~
+	\hfill
 	\begin{subfigure}{0.48\textwidth}
 		\input{../sunSpots/img/monthly/profilePlot.tex}
 		\caption{Monthly mean sunspots \ref{fig:monthlyss}}\label{fig:monthlyprofile}
@@ -46,43 +52,48 @@ As an example, in \autoref{fig:profilemain}, different time windows with their r
 	\caption{The profile $\{Y_n\}$, defined as \autoref{step1} and relative to data in \autoref{fig:ss}}\label{fig:profile}
 \end{figure}
 
-\subsubsection*{Log-log plot}
-As describe in \autoref{step4}, the total variance $F_2^{( k )}(\tau)$ is estimated for equally spaced $\log(\tau)$.
+\paragraph{Comparison of two databases}
+As describe in \autoref{step4}, the total variance $F_2^{( k )}(\tau)$ is estimated for equally spaced $\log(\tau)$.\\
+Neglecting the section with the biggest $\tau$s (and also few points), $\alpha(2)$ parameter estimated by DFA1 describes the same behaviour at the same $\tau$, independently from the frequency of sampling, in the comparison between \autoref{fig:dailyDFA1} and \autoref{fig:monthlyDFA1}.\\
+Also for higher $k$, the estimation of Hurst Exponent provides the same results between 4 and 450 months. For convenience, the following work is presented for monthly mean sunspots data. 
 
-Firstly, neglecting the section with few points, DFA1 gives same results at the same $\tau$, independently from the frequency of sampling, as in \autoref{fig:dailyDFA1} and \autoref{fig:monthlyDFA1}.
+\paragraph{Considerations on DFA1}
+The plots in \autoref{fig:DFA} show that the time series have different slopes at different time scales. Ideally, however, if a process is self-affinal, the log-log plot of $F_2^{( k )}(\tau)$ should be a straight line. This could mean that the process has different behaviour at different time scale, or that the order of detrend $k$ is too low.
 
-Secondly, the plots shows that the the time series have different slopes, at different time scale. Ideally, however, if a process is self-affinal, the log-log plot of $F_2^{( k )}(\tau)$ should be a straight line. This could mean that the process has different behaviour at different time scale, or that the order of detrend $k$ is too low.
-
-As it is illustrated in \autoref{fig:profilemain}, the order $k=7$ can't fit properly a time window $\tau > \SI{280}{months}$. Analogously, lower $k$ capability of fitting is limited. 
+\paragraph{Problems of DFA$k$}
+As illustrated for example in \autoref{fig:profilemain}, the polynomial of order $k=7$ can't fit properly a time window $\tau > \SI{280}{months}$. Analogously, lower $k$ capability of fitting is limited. 
 
 OLS can't fit the sunspots $Y_n$ with a polynomial of order 8 or bigger, because of the overflow of double in C program.
 
+\paragraph{Considerations on DFA7}
 A comparison of DFA$k$ with different $k$ is plotted in \autoref{fig:DFAk}. 
 The behaviour of the time series is the same in windows well detrended (dashed line).\\ 
 The series in DFA7 shows two behaviour, and so is multi-fractal:
 \begin{itemize}
-	\item for $\tau \le \SI{132}{months}$, $\alpha(q) \in (0.5, 1)$ and so the process is a stationary long-range memory one.
-	\item for $\SI{132}{months} < \tau \le \SI{280}{months}$, $\alpha(q) \in (2, 2.5)$ 
+	\item for $\tau \le \SI{132}{months}$, $\alpha(2) \in (0.5, 1)$ and so the process is a stationary long-range memory one.
+	\item for $\SI{132}{months} < \tau \le \SI{280}{months}$, $\alpha(2) \in (2, 2.5)$ 
 	\item for $\tau > \SI{280}{months}$, the series is not correct detrended.
 \end{itemize}
 
-In \autoref{sec:hdfa} nothing is said about process with $\alpha(q)>2$, and I have no idea on how to give an interpretation to this result. 
-
-Comparing with the same work done by Movahed et al. \cite{Movahed_2006}, the DFA1 applied on all dataset gives the same result. However their estimation on $F_2^{( k )}(\tau)$ is much more unstable, and so the residuals have a more casual distribution.
+In \autoref{sec:hdfa} nothing is said about process with $\alpha(2)>2$. Actually the literature is not so rich and in Movahed et al. \cite{Movahed_2006} it is given only a proof that $\alpha(2) \in (1, 2)$ only for fractional Brownian motion.\\
+Assuming I have made no mistake, my hypothesis is that time series has a multi-dimensional noise, like a bifractional Brownian motion.
 
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}{\textwidth}
+		\centering
 		\input{../sunSpots/img/true/DFAPlot.tex}
 		\caption{Monthly mean sunspots \ref{fig:monthlyss} DFA$k$\\ Vertical lines indicates the interval used as example in \autoref{fig:profilemain}}\label{fig:DFAk}
 	\end{subfigure}
-
+	\vfill
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/daily/DFAPlot.tex}
 		\caption{Daily sunspot \ref{fig:dailyss} DFA1}\label{fig:dailyDFA1}
 	\end{subfigure}
-	~
+	\hfill
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/monthly/DFAPlot.tex}
 		\caption{Monthly mean sunspots \ref{fig:monthlyss} DFA1}\label{fig:monthlyDFA1}
 	\end{subfigure}
@@ -91,9 +102,11 @@ Comparing with the same work done by Movahed et al. \cite{Movahed_2006}, the DFA
 	In \autoref{fig:dailyDFA1} the unit of $\tau$ is [days] and in \autoref{fig:monthlyDFA1} is [months]. The vertical black lines are placed at same $\tau = 4,17, 132, 450 \text{ months}$.}\label{fig:DFA}
 \end{figure}
 
-\subsubsection*{Fourier-DFA}
-To remove the sinusoidal trend, Movahed et al. applied a F50-DFA1. It consist in Fourier transform the profile $\{ Y_n \}$, set to zero the first 50 terms, anti-transform, and then applying the DFA. However I got inconsistent results comparing to them.
+\subsubsection*{Comparison with other authors}
+Comparing with the same work done by Movahed et al. \cite{Movahed_2006}, the DFA1 applied on all dataset gives the same result. However their estimation on $F_2^{( k )}(\tau)$ is much more unstable, and so the residuals have a more casual distribution. 
 
+\paragraph{Fourier DFA}
+To remove the sinusoidal trend, Movahed et al. applied a F50-DFA1. It consist in Fourier transform the profile $\{ Y_n \}$, set to zero the first 50 terms, anti-transform, and then applying the DFA1. \\
 In general, F$n$-DFA$k$ indicates the DFA$k$, where the first $n$ terms of real Fourier transform are set to 0.  
 
 In \autoref{fig:f50} and \autoref{fig:f100} the first 50 and 100 terms are removed from the profile. However, the graph of \autoref{fig:f50} still contains a trend. This is also evident because F50-DFA1 and DFA1 (\autoref{fig:monthlyDFA1}) for sufficient small $\tau$ gives the same $\alpha(2)$.\\
@@ -101,19 +114,24 @@ For small $\tau$, F100-DFA works, because the estimation of time series behaviou
 
 However, F-DFA do not provides information for big $\tau$, because the lowest frequencies are removed and so the variation for long period become constant. 
 
+In this case, my conclusion are different from Movahed et al.. They assert that a F50-DFA1 is sufficient. In my opinion instead, a sinusoidal trend is still evident. Moreover, their graphs of $F_2^{( k )}(\tau)$ are similar to a straight line with high variance.
+
 \begin{figure}[!h]
 	\centering
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/fourier/f1profilePlot.tex}
 		\caption{Profile $\{Y_n\}$ without the first $50$ terms of Fourier transform}\label{fig:f50}
 	\end{subfigure}
-	~
+	\hfill
 	\begin{subfigure}{0.48\textwidth}
+		\centering
 		\input{../sunSpots/img/fourier/f2profilePlot.tex}
 		\caption{Profile $\{Y_n\}$ without the first $100$ terms of Fourier transform}\label{fig:f100}
 	\end{subfigure}
-	
+	\vfill
 	\begin{subfigure}{\textwidth}
+		\centering
 		\input{../sunSpots/img/fourier/DFAPlot.tex}
 		\caption{F$n$-DFA1\\}
 	\end{subfigure}

@@ -1,6 +1,6 @@
 \section{Detrended Fluctuation Analysis}\label{sec:dfa}
 
-The purpose of DFA is to estimate the variance of the partials sum of the series $X = \{ X_n \}_{n \in \Z}$. In this way, the \autoref{cond:3} allows to estimate the long-range dependence parameter. 
+The purpose of DFA is to estimate the variance of partial sums of the series $X = \{ X_n \}_{n \in \Z}$. In this way, the \autoref{cond:3} allows to estimate the long-range dependence parameter. 
 
 The Multifractal Detrended Fluctuation Analysis (MF-DFA) is a generalization of the standard DFA to all moment $q$. 
 
@@ -35,7 +35,6 @@ and $\bar{X}$ as
 
 \begin{step}\label{step2}
 Split the full time $T$ in time windows $\tau$.
-
 \begin{equation}
 	k+2 \le \tau \le \frac{T}{4}
 \end{equation}
@@ -49,19 +48,21 @@ Compute the linear regression $ g^{( k )}(t, \tau, t') $ of order $k$ of $Y(t')$
 \begin{equation}
 	g^{( k )}(t, \tau, t') = \sum_{i=0}^{k} a_i t'^{i} \quad \text{with $a_i$ parameters}
 \end{equation}
-Determinate the variance $ f_2^{( k )}( t, \tau ) $ between the profile $ y(t) $ and the regression $ g^{( k )}(t, \tau, t') $.
+
+Determinate the variance $ f_2^{( k )}( t, \tau ) $ between the profile $ Y(t) $ and the regression $ g^{( k )}(t, \tau, t') $.
 \begin{equation}
 	f_{2 \ +}^{( k )}( t, \tau ) \equiv \frac{1}{\tau} \int_{t}^{t+\tau} dt' \left( Y( t' ) - g^{( k )}(t, \tau, t')  \right)^2
 \end{equation}
 
-Since the detrending of the time series is done by the subtraction of the polynomial fits from the profile $Y(t)$, different order DFA differ in their capability of eliminating trends in the series. In (MF-)DFA$k$ ($k$th-order (MF-)DFA) trends of order $k$ in the profile $Y(t)$ (or, equivalently, of order $k-1$ in the original series $x(t)$) are eliminated. 
+Since the detrending of time series is done by the subtraction of polynomial fits from the profile $Y(t)$, different order DFA differ in their capability of eliminating trends in the series.\\
+In (MF-)DFA$k$ ($k$th-order (MF-)DFA) trends of order $k$ in the profile $Y(t)$ (or, equivalently, of order $k-1$ in the original series $X(t)$) are eliminated. 
 
 Analogously let introduce $g_n^{(k)}(\tau, t_i)$ with $t_i \in [t_n, t_n + \tau]$, which contains $l_n(\tau)$ points, and $f_{2\ n}^{( k )}( \tau )$.
 \begin{equation}
 	f_{2\ n \ +}^{( k )}( \tau ) \equiv \frac{1}{l_n(\tau) - k - 1} \sum_{i=n}^{n + l_n(\tau)} \left(Y_i - g_n^{k} (\tau, t_i) \right)
 \end{equation}
 
-$f_{2\ n}^{( k )}( \tau )$ is the variance of the sum of the series $\{ X^{(l_n(\tau))}_i\}_{i= n, \dots, n+l_n(\tau)} $ with the correct normalization $l_n(\tau) - k - 1$. In fact, for $k$th order detrending, a time window containing $l_n(\tau) = k + 1$ sample points yields exactly zero fluctuation. This also justify the condition $\tau \ge k+2$ in \autoref{step2}.\\
+$f_{2\ n}^{( k )}( \tau )$ is the variance of $\{ Y^{(l_n(\tau))}_i\}_{i= n, \dots, n+l_n(\tau)} $ with the correct normalization $l_n(\tau) - k - 1$. In fact, for $k$th order detrending, a time window containing $l_n(\tau) = k + 1$ sample points yields exactly zero fluctuation. This also justify the condition $\tau \ge k+2$ in \autoref{step2}.\\
 Moreover, the results for large $\tau$ become unreliable, because of the few time windows who can be chosen. So often only $\tau \le \nicefrac{T}{4}$ is used. 
 
 $f_{2 \ +}^{( k )}( t, \tau )$ and $f_{2\ n \ +}^{( k )}( \tau )$ are defined in an asymmetric way. In fact $t \in [0, T-\tau]$ and $n = 1 \dots, N - l_n(\tau)$. 
