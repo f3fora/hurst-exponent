@@ -5,104 +5,105 @@ The purpose of DFA is to estimate the variance of partial sums of the series $X 
 The Multifractal Detrended Fluctuation Analysis (MF-DFA) is a generalization of the standard DFA to all moment $q$. 
 
 \subsection{Multifractal Detrended Fluctuation Analysis}
-The procedure is described for a continuous stochastic process $\{X(t)\}_{t\in [0, T]}$ and then applied to a time series $\{ X_n \}_{n = 1, \dots, N} $ sampled at time $t_n$, underlining some tips and tricks. 
+The procedure is described for a continuous stochastic process $\{X(t)\}_{t\in [0, T]}$ and then applied to a time series $\{ X_n \}_{n = 1, \dots, N} $ sampled at time $t_n$.
 
 Notice that the symbology of $\{ X_n \}_{n = 1, \dots, N} $ is assumed as convention and, to be consistent with the previous one, should be
-$\{ X(t) \}_{t \in T_N}$ where $T_N$ is the set of the sampling times $T_N \equiv \{ t_n\}_{n = 1, \dots, N}$ with $t_1 = 0$ and $t_N = T$ \\
+$\{ X(t) \}_{t \in T_N}$ where $T_N$ is the set of the sampling times $T_N \equiv \{ t_n\}_{n = 1, \dots, N}$ with $t_1 = 0$ and $t_N = T$. \\
 Moreover suppose that this series $\{ X_n \}$ is of compact support, i.e. $X_n = 0$ or for an insignificant fraction of the values only. 
 
 \begin{step}\label{step1}
-Define the "profile" $Y(t)$ of $X(t)$.
-\begin{equation}
+Define the "profile" $\{Y(t)\}$ of $\{X(t)\}$.
+\begin{equation*}
 	Y( t ) = \int_{0}^{t} dt' (X( t' ) - \bar{X} ) 
-\end{equation}
-where $\bar{X}$ is the mean of $X(t)$ computed on the whole time series.
-\begin{equation}
+\end{equation*}
+where $\bar{X}$ is the mean of $\{X(t)\}$ computed on the whole time series.
+\begin{equation*}
 	\bar{X} = \frac{1}{T} \int_{0}^{T} dt' X( t' )
-\end{equation}
+\end{equation*}
 
 Subtracting the mean is actually not necessary, because it will be remove anyway in linear detrending in \autoref{step3}.
 
-For $X_n$, instead, the profile is defined as 
-\begin{equation}
+For $\{X_n\}$, instead, the profile is defined as 
+\begin{equation*}
 	Y_n = \sum_{i=1}^{n} \left( X_i - \bar{X} \right)
-\end{equation}
+\end{equation*}
 and $\bar{X}$ as 
-\begin{equation}
+\begin{equation*}
 	\bar{X} = \frac{1}{N} \sum_{i=1}^{N} x_i 
-\end{equation}
+\end{equation*}
 \end{step}
 
 \begin{step}\label{step2}
 Split the full time $T$ in time windows $\tau$.
-\begin{equation}
+\begin{equation*}
 	k+2 \le \tau \le \frac{T}{4}
-\end{equation}
+\end{equation*}
 
-Each window contains $l_n(\tau)$ points of the $X_n$ series. \\
-If $X_n$ is sampled at constant frequency $\nu = \nicefrac{1}{\Delta T}$, so $T = N \Delta T$, $l(\tau) = l_n(\tau)$ and $l(\tau) \Delta T = \tau $. 
+Each window contains $l_n(\tau)$ points of the $\{X_n\}$ series. \\
+If $\{X_n\}$ is sampled at constant frequency $\nu = \nicefrac{1}{\Delta T}$, so $T = N \Delta T$, $l(\tau) = l_n(\tau)$ and $l(\tau) \Delta T = \tau $. 
 \end{step}
 
 \begin{step}\label{step3}
-Compute the linear regression $ g^{( k )}(t, \tau, t') $ of order $k$ of $Y(t')$ in range $t' \in \left[t, t + \tau \right]$.
-\begin{equation}
+Compute the linear regression $ g^{( k )}(t, \tau, t') $ of order $k$ of $\{Y(t')\}$ in range $t' \in \left[t, t + \tau \right]$.
+\begin{equation*}
 	g^{( k )}(t, \tau, t') = \sum_{i=0}^{k} a_i t'^{i} \quad \text{with $a_i$ parameters}
-\end{equation}
+\end{equation*}
 
-Determinate the variance $ f_2^{( k )}( t, \tau ) $ between the profile $ Y(t) $ and the regression $ g^{( k )}(t, \tau, t') $.
-\begin{equation}
+Determinate the variance $ f_2^{( k )}( t, \tau ) $ between the profile $\{Y(t)\}$ and the regression $ g^{( k )}(t, \tau, t') $.
+\begin{equation*}
 	f_{2 \ +}^{( k )}( t, \tau ) \equiv \frac{1}{\tau} \int_{t}^{t+\tau} dt' \left( Y( t' ) - g^{( k )}(t, \tau, t')  \right)^2
-\end{equation}
+\end{equation*}
 
-Since the detrending of time series is done by the subtraction of polynomial fits from the profile $Y(t)$, different order DFA differ in their capability of eliminating trends in the series.\\
-In (MF-)DFA$k$ ($k$th-order (MF-)DFA) trends of order $k$ in the profile $Y(t)$ (or, equivalently, of order $k-1$ in the original series $X(t)$) are eliminated. 
+Since the detrending of time series is done by the subtraction of polynomial fits from the profile $\{Y(t)\}$, different order DFA differ in their capability of eliminating trends in the series.\\
+In (MF-)DFA$k$ ($k$th-order (MF-)DFA) trends of order $k$ in the profile $\{Y(t)\}$ (or, equivalently, of order $k-1$ in the original series $\{X(t)\}$) are eliminated. \\
+If the time series is correctly detrended for $k_{min}$, its behaviour is predicted by all $k \ge k_{min}$. There may be, however, some strange effects for $k < k_{min}$.
 
-Analogously let introduce $g_n^{(k)}(\tau, t_i)$ with $t_i \in [t_n, t_n + \tau]$, which contains $l_n(\tau)$ points, and $f_{2\ n}^{( k )}( \tau )$.
-\begin{equation}
+Analogously, introduce $g_n^{(k)}(\tau, t_i)$ with $t_i \in [t_n, t_n + \tau]$, which contains $l_n(\tau)$ points, and $f_{2\ n}^{( k )}( \tau )$.
+\begin{equation*}
 	f_{2\ n \ +}^{( k )}( \tau ) \equiv \frac{1}{l_n(\tau) - k - 1} \sum_{i=n}^{n + l_n(\tau)} \left(Y_i - g_n^{k} (\tau, t_i) \right)
-\end{equation}
+\end{equation*}
 
 $f_{2\ n}^{( k )}( \tau )$ is the variance of $\{ Y^{(l_n(\tau))}_i\}_{i= n, \dots, n+l_n(\tau)} $ with the correct normalization $l_n(\tau) - k - 1$. In fact, for $k$th order detrending, a time window containing $l_n(\tau) = k + 1$ sample points yields exactly zero fluctuation. This also justify the condition $\tau \ge k+2$ in \autoref{step2}.\\
 Moreover, the results for large $\tau$ become unreliable, because of the few time windows who can be chosen. So often only $\tau \le \nicefrac{T}{4}$ is used. 
 
-$f_{2 \ +}^{( k )}( t, \tau )$ and $f_{2\ n \ +}^{( k )}( \tau )$ are defined in an asymmetric way. In fact $t \in [0, T-\tau]$ and $n = 1 \dots, N - l_n(\tau)$. 
+$f_{2 \ +}^{( k )}( t, \tau )$ and $f_{2\ n \ +}^{( k )}( \tau )$ are defined in an asymmetric way. Indeed $t \in [0, T-\tau]$ and $n = 1 \dots, N - l_n(\tau)$. 
 To remove this asymmetry, integral and summary can be also computed "starting from the opposite end", so $t \in [\tau, T]$ and $n = 1 + l_n(\tau), \dots, N$
 
-\begin{equation}
+\begin{equation*}
 	f_{2 \ -}^{( k )}( t, \tau ) \equiv \frac{1}{\tau} \int_{t-\tau}^{t} dt' \left( Y( t' ) - g^{( k )}(t, \tau, t')  \right)^2
-\end{equation}
+\end{equation*}
 
-\begin{equation}
+\begin{equation*}
 	f_{2\ n \ -}^{( k )}( \tau ) \equiv \frac{1}{l_n(\tau) - k - 1} \sum_{i=n - l_n(\tau)}^{n} \left(Y_i - g_n^{k} (\tau, t_i) \right)
-\end{equation}
+\end{equation*}
 
-Practically, calculate $f_{2\ n}^{( k )}( \tau )$ for each $n$ is useless and demands a lot of time.  Instead compute $f_{2\ n}^{( k )}( \tau )$ only for $n$, where $t_n$ is the closest to a multiply of $\Delta \tau = \nicefrac{\tau}{m}$ with $m \in \N$, is a good approximation.
+Practically, calculating $f_{2\ n}^{( k )}( \tau )$ for each $n$ is useless and demands a lot of time.  Instead computing $f_{2\ n}^{( k )}( \tau )$ only for $n$, where $t_n$ is the closest to a multiply of $\Delta \tau = \nicefrac{\tau}{m}$ with $m \in \N$, is a good approximation.
 \end{step}
 
 \begin{step}\label{step4}
 $F_q^{( k )}(\tau )$ is the momentum of order $q$ over all time windows of length $\tau$.
-\begin{equation}
+\begin{equation*}
 	F_q^{( k )} ( \tau ) =  \left(\int_0^{T-\tau} dt \left( f_2^{( k )}( t, \tau ) \right)^{\nicefrac{q}{2}} p(t, \tau)  \right)^{\nicefrac{1}{q}}
-\end{equation}
+\end{equation*}
 
-For a given $\tau$ there are $N_\tau$ function $f_{2\ n}^{( k )}( \tau )$, $F_q^{( k )} ( \tau )$ and let assume that $t_n$ are uniform distributed.
-\begin{equation}
+For a given $\tau$ there are $N_\tau$ functions $f_{2\ n}^{( k )}( \tau )$, $F_q^{( k )} ( \tau )$. Assume that $\{t_n\}$ are uniform distributed.
+\begin{equation*}
 	F_q^{( k )} ( \tau ) = \left( \frac{1}{N_\tau} \sum_{n=1}^{N_\tau} \left( f_{2\ n}^{( k )}( \tau ) \right)^{\nicefrac{q}{2}} \right)^{\nicefrac{1}{q}}
-\end{equation}
+\end{equation*}
 \end{step}
 
 \begin{step}\label{step5}
 Determine the scaling behaviour of the fluctuation functions by analysing
 log–log plots of $F_q^{( k )}(\tau )$ versus $\tau$.
-\begin{equation}
+\begin{equation*}
 	F_q^{( k )}(\tau ) \propto \tau^{\alpha(q)}
-\end{equation}
+\end{equation*}
 In general, the exponent $\alpha(q)$ may depend on $q$. 
 
 A tip is to choose equally spaced $\log(\tau)$ and calculate $F_q^{( k )}(\tau )$ for each $\tau$. Then fit the following equation.
-\begin{equation}
+\begin{equation*}
 	\log(F_q^{( k )}(\tau )) = C + \alpha(q) \log(\tau)
-\end{equation}
+\end{equation*}
 
 This construction do not assume that $l_n(\tau)$ is the same for each $n$, but it is not a problem. \\
 Let be $\N \ni l_n(\tau) = l(\tau) + \varepsilon_n$, where $\tau = \left< \Delta T\right> l(\tau)$, $\left< \Delta T\right>$ is the average as sampling time and $l(\tau)$ can be real. \\
@@ -112,8 +113,8 @@ For big $\tau$, $\varepsilon_n$ is negligible, and so $l_n(\tau) \approx l(\tau)
 \subsection{Hurst exponent and DFA$k$}\label{sec:hdfa}
 The $\alpha(q)$ parameter can be interpreter in term of Hurst exponent $H$. There's a linear relationship between $\alpha(q=2)$ and $H$. As said before, the DFA$k$ is equivalent to MF-DFA$k$($q=2$).
 
-If $X_n$ is a stationary time series (e.g fractional Gaussian noise), $Y_n$ will be a self-similarity process, and so $0 < \alpha(q = 2) < 1$. For \autoref{cond:3}, the exponent $\alpha(2)$ is identical to the Hurst exponent $H$.
+If $X$ is a stationary time series (e.g. fractional Gaussian noise), $Y$ is a self-similarity process, and so $0 < \alpha(q = 2) < 1$. For \autoref{cond:3}, the exponent $\alpha(2)$ is identical to the Hurst exponent $H$.
 
-For a non-stationary signal (e.g. fractional Brownian motion), instead $\alpha(q = 2) > 1$. In this case the relation between exponents $\alpha(2)$ and $H$ will be $H = \alpha(q = 2)-1$ \cite{Movahed_2006}.  
+For a non-stationary signal (e.g. fractional Brownian motion), instead $\alpha(q = 2) > 1$. In this case the relation between exponents $\alpha(2)$ and $H$ is $H = \alpha(q = 2)-1$\cite{Movahed_2006}.  
 
-The exponent $\alpha(q)$ is known as the generalized Hurst exponent.
+The parameter $\alpha(q)$ is known as the generalized Hurst exponent.

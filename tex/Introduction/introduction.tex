@@ -1,6 +1,6 @@
 \section{Introduction} 
-The main purpose of the present work is to show how to estimate the Hurst exponent for a mono-dimensional time series, using the Detrended Fluctuation Analysis and how to interpret the result. \\
-This technique will be developed as a C program, that can be found online \cite{Foradori}, and applied to a time series about sunspots. 
+The main purpose of the present work is to show how to estimate the Hurst exponent for a mono-dimensional time series, using the Detrended Fluctuation Analysis and how to interpret it. \\
+This technique is developed as a C program, which can be found online\cite{Foradori}, and applied to a time series about sunspots. 
 
 \subsection{Hurst Exponent}
 The Hurst exponent is a dimensionless estimator used to evaluate self-similarity and long-range dependence properties of time series. \\
@@ -15,8 +15,8 @@ where $H \in \left[0, 1 \right] $ is the Hurst exponent, $S (N)$ is the standard
 A modern definition is discussed in \autoref{sec:theory}.
 
 \subsection{Detrended Fluctuation Analysis}
-It is often not advisable to estimate the Hurst exponent of measured data by \autoref{eq:defHE}, because often them carry not interesting and explicit trends, or, more often, do not exhibit a clear scaling.
+It is often not advisable to estimate the Hurst exponent of measured data by \autoref{eq:defHE}, because often they carry not interesting and explicit trends, or, more often, do not exhibit a clear scaling.
 
-So it is useful to introduce a particular way of detrending, called Detrended Fluctuation Analysis (DFA), which was developed by Peng et al. \cite{PhysRevE.49.1685} for the analysis of DNA.
+So it is useful to introduce a particular way of detrending, called Detrended Fluctuation Analysis (DFA), which was developed by Peng \etal\cite{PhysRevE.49.1685} for the analysis of DNA.
 
 The advantages of DFA over other methods are that of permitting the detection of long-range correlations in time series with non-stationary and of avoiding the spurious detection of apparent long-range correlations that are an artefact of non-stationary.
