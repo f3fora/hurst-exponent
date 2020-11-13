@@ -1,0 +1,357 @@
+\documentclass{beamer}
+
+\usepackage[UKenglish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{xcolor}
+\usepackage{siunitx}
+\usepackage[T1]{fontenc}
+
+\usepackage{mathtools}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{physics}
+\usepackage{nicefrac}
+\usepackage[backend=biber]{biblatex}
+
+\addbibresource{../tex/bibliography.bib}
+
+\newcommand{\numberset}{\mathbb}
+\newcommand{\N}{\numberset{N}}
+\newcommand{\R}{\numberset{R}}
+\newcommand{\Q}{\numberset{Q}}
+\newcommand{\Z}{\numberset{Z}}
+\newcommand{\deq}{\overset{d}{=}}
+\newcommand{\etal}{\textit{et al.}}
+
+\graphicspath{{../sunSpots/img/}}
+
+\defbeamertemplate*{title page}{customized}[1][]
+{
+	\begin{beamercolorbox}[center]{institute}
+	\includegraphics[height=.2\textheight]{../tex/10000000000004E1000001E114DE41E38E5F0A34.jpg}
+	\par\tiny{DEPARTMENT OF PHYSICS}
+	\par\tiny{BACHELOR DEGREE IN PHYSICS}
+	\end{beamercolorbox}
+	\bigskip
+	\begin{beamercolorbox}[sep=0.3cm,center]{title}
+		\usebeamerfont{title}An investigation of\\HURST EXPONENT
+	\end{beamercolorbox}
+	\bigskip
+	\begin{beamercolorbox}[center]{author}
+	\begin{columns}
+		\begin{column}{0.47\textwidth}
+			\centering
+			Candidate:\\\textbf{Alessandro Foradori}
+		\end{column}
+	
+		\begin{column}{0.47\textwidth}
+			\centering
+			Supervisor:\\\textbf{Leonardo Ricci}
+		\end{column}
+	\end{columns}
+	\end{beamercolorbox}
+	\vfill
+	\begin{beamercolorbox}[left]{date}
+		\centering
+		\small17th November 2020
+	\end{beamercolorbox}
+}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}
+{
+	\leavevmode%
+	\hbox{%
+		\begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+			\usebeamerfont{title in head/foot}
+		\end{beamercolorbox}%
+		\begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+			\vfill
+			\insertframenumber / \inserttotalframenumber \hspace*{1ex}
+	\end{beamercolorbox}}%
+	\vskip0pt%
+}
+
+\usetheme{Pittsburgh}
+\usecolortheme{beaver}
+\begin{document}	
+
+{	
+\setbeamertemplate{footline}{} 
+\begin{frame}
+	\titlepage
+\end{frame}
+}
+\addtocounter{framenumber}{-1}
+
+{
+	\setbeamertemplate{footline}
+	{
+		\leavevmode%
+		\hbox{%
+			\begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,left,leftskip=2ex]{title in head/foot}
+				\begin{itemize}
+					\item \fullcite{PhysRevE.49.1685}
+					\item \fullcite{Foradori}
+				\end{itemize}
+			\end{beamercolorbox}%
+			\begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+				\vfill
+				\insertframenumber / \inserttotalframenumber \hspace*{1ex}
+		\end{beamercolorbox}}%
+		\vskip0pt%
+	}
+
+\begin{frame}{Introduction}
+	\begin{block}{Hurst exponent}
+		The Hurst exponent is a dimensionless estimator used to evaluate self-similarity and long-range dependence properties of time series. 
+		\begin{equation*}
+			\mathbb{E} \left[\frac{R(N)}{S(N)}\right] \propto N^{H} \quad \text{for } N \to \infty
+		\end{equation*}
+	\end{block}
+
+	\begin{block}{Detrended fluctuation analysis}
+	\end{block}
+
+\end{frame}
+}
+
+{
+\setbeamertemplate{footline}
+	{
+		\leavevmode%
+		\hbox{%
+			\begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,left,leftskip=2ex]{title in head/foot}
+				\begin{itemize}
+					\item \fullcite{pipiras_taqqu_2017}
+					\item \fullcite{Beran:2304008}
+				\end{itemize}
+			\end{beamercolorbox}%
+			\begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+				\vfill
+				\insertframenumber / \inserttotalframenumber \hspace*{1ex}
+		\end{beamercolorbox}}%
+		\vskip0pt%
+	}
+\begin{frame}{Long Memory}
+		\begin{block}{Time series}
+		A discrete weakly stationary stochastic process $\{X_n\}_{n \in \Z}$ is called \textbf{time series}.
+	\end{block}
+\end{frame}
+}
+
+\begin{frame}{Long memory}
+	\begin{block}{Long-range dependence}
+		\begin{itemize}
+			\item $\gamma_X(k) \propto	k^{2d -1}$
+			\item $\sum_{k} \abs{\gamma_X(k)} = \infty$
+			\item $\textnormal{Var}(X_1 + \dots + X_N) \propto N^{2d + 1}$
+		\end{itemize}
+		with $ d \in (0, 0.5) $
+	\end{block}
+	\begin{block}{Short-range dependence}
+		$\sum_{k} \abs{\gamma_X(k)} < \infty$
+	\end{block}
+	\begin{block}{Antipersistance}
+		$\sum_{k} \abs{\gamma_X(k)} = 0$ and $d < 0$
+	\end{block}
+\end{frame}
+
+
+\begin{frame}{Long memory}
+	\begin{block}{Self-similarity}
+		Intuitively, self-similarity means that a stochastic process scaled in time (that is plotted with a different time scale) looks statistically the same as the original process when properly rescaled in space. 
+		\begin{equation*}
+			\{ X(ct) \}_{t \in \R} \deq \{ c^H X(t) \}_{t \in \R}  \quad \text{with $H>0$ and $c>0$}		
+		\end{equation*} 
+	\end{block}
+\end{frame}
+
+\begin{frame}{Long memory}
+	\begin{equation*}
+		H = \frac{1}{2} + d
+	\end{equation*}
+	\begin{itemize}
+		\item $H \in (0.5, 1]$ long-range dependence
+		\item $H = 0.5$ no time lag
+		\item $H \in (0, 0.5)$ anti-persistent short-range dependence 
+	\end{itemize}
+\end{frame}
+
+{
+	\setbeamertemplate{footline}
+	{
+		\leavevmode%
+		\hbox{%
+			\begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,left,leftskip=2ex]{title in head/foot}
+				\begin{itemize}
+					\item \fullcite{pipiras_taqqu_2017}
+					\item \fullcite{Beran:2304008}
+				\end{itemize}
+			\end{beamercolorbox}%
+			\begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+				\vfill
+				\insertframenumber / \inserttotalframenumber \hspace*{1ex}
+		\end{beamercolorbox}}%
+		\vskip0pt%
+	}
+
+\begin{frame}{DFA}{Purpose}
+	\begin{block}{}
+		The purpose of DFA is to estimate the variance of partial sums of the series $X = \{ X_n \}_{n \in \Z}$. In this way, $\textnormal{Var}(X_1 + \dots + X_N) \propto N^H$ allows to estimate the Hurst exponent
+	\end{block}
+\end{frame}
+}
+
+\begin{frame}{MF-DFA}{Step1}
+	\begin{block}{}
+		Define the "profile" $\{Y(t)\}$ of $\{X(t)\}$.
+		\begin{equation*}
+			Y( t ) = \int_{0}^{t} dt' (X( t' ) - \bar{X} ) 
+		\end{equation*}
+		where $\bar{X}$ is the mean of $\{X(t)\}$ computed on the whole time series.
+	\end{block}
+\end{frame}
+
+\begin{frame}{MF-DFA}{Step2}
+	\begin{block}{}
+			Split the full time $T$ in time windows $\tau$.
+	\end{block}
+\end{frame}
+
+\begin{frame}{MF-DFA}{Step3}
+	\begin{block}{}
+		Compute the linear regression $ g^{( k )}(t, \tau, t') $ of order $k$ of $\{Y(t')\}$ in range $t' \in \left[t, t + \tau \right]$.
+		\\
+		Determinate the variance $ f_2^{( k )}( t, \tau ) $ between the profile $\{Y(t)\}$ and the regression $ g^{( k )}(t, \tau, t') $.
+		\begin{equation*}
+			f_{2}^{( k )}( t, \tau ) \equiv \frac{1}{\tau} \int_{t}^{t+\tau} dt' \left( Y( t' ) - g^{( k )}(t, \tau, t')  \right)^2
+		\end{equation*}
+	\end{block}
+\end{frame}
+
+\begin{frame}{MF-DFA}{Step4}
+	\begin{block}{}
+		$F_q^{( k )}(\tau )$ is the momentum of order $q$ over all time windows of length $\tau$.
+		\begin{equation*}
+			F_q^{( k )} ( \tau ) =  \left(\int_0^{T-\tau} dt \left( f_2^{( k )}( t, \tau ) \right)^{\nicefrac{q}{2}} p(t, \tau)  \right)^{\nicefrac{1}{q}}
+		\end{equation*}
+	\end{block}
+\end{frame}
+
+\begin{frame}{MF-DFA}{Step5}
+	\begin{block}{}
+		Determine the scaling behaviour of the fluctuation functions by analysing
+		log–log plots of $F_q^{( k )}(\tau )$ versus $\tau$.
+		\begin{equation*}
+			F_q^{( k )}(\tau ) \propto \tau^{\alpha(q)}
+		\end{equation*}
+	\end{block}
+\end{frame}
+
+\begin{frame}{DFA}{Interpretation}
+	\begin{block}{}
+		\begin{itemize}
+			\item $\alpha(2) \in (0, 1]$ stationary process with $\alpha(2) = H$
+			\item $\alpha(2) \in (1, 2]$ non-stationary process with $\alpha(2) = 1 + H$
+		\end{itemize}
+	\end{block}
+\end{frame}
+
+{
+	\setbeamertemplate{footline}
+	{
+		\leavevmode%
+		\hbox{%
+			\begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,left,leftskip=2ex]{title in head/foot}
+				\begin{itemize}
+					\item \fullcite{sidc}
+					\item \fullcite{Movahed_2006}
+				\end{itemize}
+			\end{beamercolorbox}%
+			\begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
+				\vfill
+				\insertframenumber / \inserttotalframenumber \hspace*{1ex}
+		\end{beamercolorbox}}%
+		\vskip0pt%
+	}
+
+\begin{frame}{Sunspots}
+	\begin{block}{}
+		On the Sun's photosphere there is a strong magnetic field. However in some localized regions (called \textbf{sunspots}), the field is significant higher and the surface appear as spots darker than the surrounding areas. Their number varies according to the approximately 11-year solar cycle	
+	\end{block}
+\end{frame}
+}
+
+\begin{frame}{Sunspots}{Raw data and profile}
+	\begin{columns}
+		\begin{column}{.47\textwidth}
+			\centering
+			\begin{block}{\small{daily sunspot number}}
+				\scalebox{.7}{\input{../sunSpots/img/daily/dataPlot.tex}}
+				\scalebox{.7}{\input{../sunSpots/img/daily/profilePlot.tex}}
+			\end{block}
+		\end{column}
+		\hfill
+		\begin{column}{.47\textwidth}
+			\centering
+			\begin{block}{\small{monthly mean sunspot number}}
+				\scalebox{.7}{\input{../sunSpots/img/monthly/dataPlot.tex}}
+				\scalebox{.7}{\input{../sunSpots/img/monthly/profilePlot.tex}}
+			\end{block}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Sunspots}{DFA1}	
+		\small{Vertical black lines at $\tau = 4,17, 132, 450 \text{ months}$.}
+	\begin{columns}
+		\begin{column}{.47\textwidth}
+			\centering
+			\begin{block}{\small{daily sunspot number}}
+			\scalebox{.7}{\input{../sunSpots/img/daily/DFAPlot.tex}}
+			\end{block}
+		\end{column}
+		\hfill
+		\begin{column}{.47\textwidth}
+			\centering
+			\begin{block}{\small{monthly mean sunspot number}}
+			\scalebox{.7}{\input{../sunSpots/img/monthly/DFAPlot.tex}}
+			\end{block}
+		\end{column}
+	\end{columns}
+\end{frame}
+
+\begin{frame}{Sunspots}{Profile fitted with polynomials of 7th order}
+			\centering
+			\scalebox{.7}{\input{../sunSpots/img/true/profilePlot.tex}}
+\end{frame}
+
+\begin{frame}{Sunspots}{DFA$k$ comparison}
+		\centering
+		\scalebox{.7}{\input{../sunSpots/img/true/DFAPlot.tex}}
+\end{frame}
+
+\begin{frame}{Sunspots}{Fourier-DFA}
+	\begin{columns}
+		\begin{column}{.47\textwidth}
+				\centering
+				\scalebox{.6}{\input{../sunSpots/img/fourier/f1profilePlot.tex}}
+				\\\vspace{1ex}
+				\tiny{profile without 50 Fourier-terms}
+		\end{column}
+		\hfill
+		\begin{column}{.47\textwidth}
+				\centering
+				\scalebox{.6}{\input{../sunSpots/img/fourier/f2profilePlot.tex}}
+				\\\vspace{1ex}
+				\tiny{profile without 100 Fourier-terms}
+		\end{column}
+	\end{columns}
+	\vfill
+		\centering
+		\scalebox{.5}{\input{../sunSpots/img/fourier/DFAPlot.tex}}
+\end{frame}
+
+\end{document}
