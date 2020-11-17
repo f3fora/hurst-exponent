@@ -12,7 +12,7 @@
 \usepackage{amsthm}
 \usepackage{physics}
 \usepackage{nicefrac}
-\usepackage[backend=biber]{biblatex}
+\usepackage[backend=biber,style=phys]{biblatex}
 
 \addbibresource{../tex/bibliography.bib}
 
@@ -179,30 +179,11 @@
 	\end{itemize}
 \end{frame}
 
-{
-	\setbeamertemplate{footline}
-	{
-		\leavevmode%
-		\hbox{%
-			\begin{beamercolorbox}[wd=.9\paperwidth,ht=2.25ex,dp=1ex,left,leftskip=2ex]{title in head/foot}
-				\begin{itemize}
-					\item \fullcite{pipiras_taqqu_2017}
-					\item \fullcite{Beran:2304008}
-				\end{itemize}
-			\end{beamercolorbox}%
-			\begin{beamercolorbox}[wd=.1\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}%
-				\vfill
-				\insertframenumber / \inserttotalframenumber \hspace*{1ex}
-		\end{beamercolorbox}}%
-		\vskip0pt%
-	}
-
 \begin{frame}{DFA}{Purpose}
 	\begin{block}{}
-		The purpose of DFA is to estimate the variance of partial sums of the series $X = \{ X_n \}_{n \in \Z}$. In this way, $\textnormal{Var}(X_1 + \dots + X_N) \propto N^H$ allows to estimate the Hurst exponent
+		The purpose of DFA is to estimate the variance of partial sums of the series $X = \{ X_n \}_{n \in \Z}$. In this way, $\textnormal{Var}(X_1 + \dots + X_N) \propto N^{2H}$ allows to estimate the Hurst exponent
 	\end{block}
 \end{frame}
-}
 
 \begin{frame}{MF-DFA}{Step1}
 	\begin{block}{}
